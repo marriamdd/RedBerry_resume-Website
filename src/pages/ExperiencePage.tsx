@@ -1,7 +1,7 @@
 import React from "react";
 
-function experiencePage() {
+function ExperiencePage() {
   return <div>experiencePage</div>;
 }
 
-export default experiencePage;
+export default ExperiencePage;
