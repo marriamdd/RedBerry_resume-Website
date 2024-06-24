@@ -5,10 +5,12 @@ import ExperiencePage from "./pages/ExperiencePage";
 import PersonalPage from "./pages/PersonalPage";
 import ResumePage from "./pages/ResumePage";
 import Layout from "./layout/Layout";
+import { GlobalStyles } from "./globalStyles/GlobalStyles";
 
 function App() {
   return (
     <>
+      <GlobalStyles />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
