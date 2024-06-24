@@ -10,6 +10,11 @@ html{
     font-size: 62.5%;
     font-family: "Noto Sans Georgian", sans-serif;
 }
+
+body {
+    background: #F9F9F9;
+}
+
 button{
     font-family: "Noto Sans Georgian", sans-serif;  
     
