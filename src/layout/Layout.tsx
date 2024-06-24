@@ -26,7 +26,7 @@ const Main = styled.main`
 
 const CvContainer = styled.div`
   width: 45%;
-  height: 100%;
+
   background: #ffffff;
 `;
 

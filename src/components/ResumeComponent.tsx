@@ -1,18 +1,27 @@
 import styled from "styled-components";
 import About from "./About";
 import Experience from "./Experience";
+import Education from "./Education";
+import logo from "../assets/logo.png";
 
 function ResumeComponent() {
   return (
     <StyledResumeComponent>
       <About />
       <Experience />
+      <Education />
+
+      <Logo src={logo} alt="logo" />
     </StyledResumeComponent>
   );
 }
 
 const StyledResumeComponent = styled.div`
   padding: 4.8rem 7.5rem 4.4rem 8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 108rem;
   h1 {
     color: #f93b1d;
     font-size: 3.4rem;
@@ -57,6 +66,11 @@ const StyledResumeComponent = styled.div`
     line-height: 22px;
     text-transform: lowercase;
   }
+`;
+
+const Logo = styled.img`
+  margin-top: auto;
+  align-self: flex-start;
 `;
 
 export default ResumeComponent;
