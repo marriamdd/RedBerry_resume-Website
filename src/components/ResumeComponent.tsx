@@ -1,14 +1,12 @@
 import styled from "styled-components";
 import About from "./About";
+import Experience from "./Experience";
 
 function ResumeComponent() {
   return (
     <StyledResumeComponent>
       <About />
-      <Experience>
-        <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
-        <h3>React Native Developer, Microsoft</h3>
-      </Experience>
+      <Experience />
     </StyledResumeComponent>
   );
 }
@@ -58,16 +56,6 @@ const StyledResumeComponent = styled.div`
     font-weight: 400;
     line-height: 22px;
     text-transform: lowercase;
-  }
-`;
-
-const Experience = styled.div`
-  & > h2 {
-    margin-top: 2.4rem;
-  }
-
-  & > h3 {
-    margin-top: 1.5rem;
   }
 `;
 
