@@ -6,11 +6,24 @@ import PersonalPage from "./pages/PersonalPage";
 import ResumePage from "./pages/ResumePage";
 import Layout from "./layout/Layout";
 import { GlobalStyles } from "./globalStyles/GlobalStyles";
+import { createContext, useState } from "react";
 
+export interface IContext {
+  currentPageNumber: number;
+  setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export const Context = createContext< IContext >(
+  currentPageNumber:1,
+  setCurrentPageNumber:()=>{}
+);
 function App() {
+  const [currentPageNumber, setCurrentPageNumber] = useState(1);
   return (
     <>
       <GlobalStyles />
+      <Context.Provider value={{currentPageNumber,
+  setCurrentPageNumber}}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -22,6 +35,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      </Context.Provider>
     </>
   );
 }
