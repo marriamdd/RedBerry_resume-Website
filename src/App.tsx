@@ -25,8 +25,8 @@ function App() {
       <Context.Provider value={{ currentPageNumber, setCurrentPageNumber }}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route element={<Layout />}>
               <Route path="/education" element={<EducationPage />} />
               <Route path="/experience" element={<ExperiencePage />} />
               <Route path="/personal" element={<PersonalPage />} />
