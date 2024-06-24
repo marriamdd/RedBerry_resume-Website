@@ -13,28 +13,27 @@ export interface IContext {
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const Context = createContext< IContext >(
-  currentPageNumber:1,
-  setCurrentPageNumber:()=>{}
-);
+export const Context = createContext<IContext>({
+  currentPageNumber: 1,
+  setCurrentPageNumber: () => {},
+});
 function App() {
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   return (
     <>
       <GlobalStyles />
-      <Context.Provider value={{currentPageNumber,
-  setCurrentPageNumber}}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/education" element={<EducationPage />} />
-            <Route path="/experience" element={<ExperiencePage />} />
-            <Route path="/personal" element={<PersonalPage />} />
-            <Route path="/resume" element={<ResumePage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <Context.Provider value={{ currentPageNumber, setCurrentPageNumber }}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="/education" element={<EducationPage />} />
+              <Route path="/experience" element={<ExperiencePage />} />
+              <Route path="/personal" element={<PersonalPage />} />
+              <Route path="/resume" element={<ResumePage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
       </Context.Provider>
     </>
   );
