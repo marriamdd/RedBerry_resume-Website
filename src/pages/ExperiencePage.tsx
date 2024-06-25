@@ -1,8 +1,38 @@
 import styled from "styled-components";
-
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
+
+interface IExperience {
+  experience: {
+    position: string;
+    employer: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }[];
+}
+
 function ExperiencePage() {
+  const { handleSubmit, register, control } = useForm<IExperience>({
+    defaultValues: {
+      experience: [
+        {
+          position: "",
+          employer: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        },
+      ],
+    },
+  });
+  const { fields, append } = useFieldArray<IExperience>({
+    control,
+    name: "experience",
+  });
+  const onSubmit: SubmitHandler<IExperience> = (data) => console.log(data);
+
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
@@ -20,47 +50,84 @@ function ExperiencePage() {
           <h1>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h1>
           <span>2/3</span>
         </div>
-        <Form>
-          <TextInput>
-            <label htmlFor="position">თანამდებობა</label>
-            <input
-              placeholder="დეველოპერი, დიზაინერი, ა.შ."
-              type="text"
-              id="position"
-            />
-            <p>მინიმუმ 2 სიმბოლო</p>
-          </TextInput>
-          <TextInput>
-            <label htmlFor="employer">დამსაქმებელი</label>
-            <input placeholder="დამსაქმებელი" type="text" id="employer" />
-            <p>მინიმუმ 2 სიმბოლო</p>
-          </TextInput>
-          <DateForm>
-            <div>
-              <label htmlFor="startDate">დაწყების რიცხვი</label>
-              <input id="startDate" type="date" />
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          {fields.map((field, index) => (
+            <div className="fieldsDiv" style={{ width: "100%" }} key={field.id}>
+              <TextInput>
+                <label
+                  style={{ paddingTop: "2rem" }}
+                  htmlFor={`experience[${index}].position`}
+                >
+                  თანამდებობა
+                </label>
+                <input
+                  placeholder="დეველოპერი, დიზაინერი, ა.შ."
+                  type="text"
+                  {...register(`experience.${index}.position`)}
+                />
+                <p>მინიმუმ 2 სიმბოლო</p>
+              </TextInput>
+              <TextInput>
+                <label htmlFor={`experience[${index}].employer`}>
+                  დამსაქმებელი
+                </label>
+                <input
+                  placeholder="დამსაქმებელი"
+                  type="text"
+                  {...register(`experience.${index}.employer`)}
+                />
+                <p>მინიმუმ 2 სიმბოლო</p>
+              </TextInput>
+              <DateForm>
+                <div>
+                  <label htmlFor={`experience[${index}].startDate`}>
+                    დაწყების რიცხვი
+                  </label>
+                  <input
+                    type="date"
+                    {...register(`experience.${index}.startDate`)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor={`experience[${index}].endDate`}>
+                    დაწყების რიცხვი
+                  </label>
+                  <input
+                    type="date"
+                    {...register(`experience.${index}.endDate`)}
+                  />
+                </div>
+              </DateForm>
+              <TextInput
+                style={{
+                  paddingBottom: "5rem",
+                  borderBottom: "1px solid #C1C1C1",
+                }}
+              >
+                <label htmlFor={`experience[${index}].description`}>
+                  აღწერა
+                </label>
+                <textarea
+                  placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
+                  {...register(`experience.${index}.description`)}
+                ></textarea>
+              </TextInput>
             </div>
-            <div>
-              <label htmlFor="endDate">დაწყების რიცხვი</label>
-              <input id="endDate" type="date" />
-            </div>
-          </DateForm>
-          <TextInput
-            style={{
-              paddingBottom: "5rem",
-              borderBottom: "1px solid #C1C1C1",
-            }}
-          >
-            <label htmlFor="textarea">აღწერა</label>
-            <textarea
-              id="textarea"
-              placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
-            ></textarea>
-          </TextInput>
+          ))}
           <Button
+            type="button"
             style={{ alignSelf: "flex-start" }}
             bg={"#62A1EB"}
             padding={"1.8rem 5.5rem"}
+            onClick={() =>
+              append({
+                position: "",
+                employer: "",
+                startDate: "",
+                endDate: "",
+                description: "",
+              })
+            }
           >
             მეტი გამოცდილების დამატება
           </Button>
@@ -72,8 +139,8 @@ function ExperiencePage() {
               marginTop: "11.5rem",
             }}
           >
-            <Button>უკან</Button>
-            <Button>შემდეგი</Button>
+            <Button type="button">უკან</Button>
+            <Button type="submit">შემდეგი</Button>
           </div>
         </Form>
       </ExperiencePageStyles>
@@ -100,6 +167,11 @@ const Form = styled.form`
   align-items: center;
   justify-content: center;
   gap: 4rem;
+  .fieldsDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
 `;
 const TextInput = styled.div`
   width: 100%;
@@ -159,7 +231,7 @@ const ExperiencePageStyles = styled.div`
     display: flex;
     align-items: center;
     padding-top: 4rem;
-    padding-bottom: 8rem;
+    padding-bottom: 5rem;
     span {
       margin-left: auto;
       margin-left: -2.8rem;
