@@ -22,6 +22,7 @@ const StyledLayout = styled.div`
 
 const Main = styled.main`
   width: 55%;
+  padding: 4.5rem 4.8rem;
 `;
 
 const CvContainer = styled.div`
