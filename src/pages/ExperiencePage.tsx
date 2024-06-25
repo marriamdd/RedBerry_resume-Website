@@ -5,6 +5,7 @@ import { Button } from "../styles/Buttons";
 import WarningIcon from "../assets/ph_warning-fill.svg";
 import { useNavigate } from "react-router-dom";
 import { Label, TextInput } from "../styles/FormStyles";
+import { useEffect } from "react";
 
 interface IExperience {
   experience: {
@@ -22,6 +23,7 @@ function ExperiencePage() {
     handleSubmit,
     register,
     control,
+    watch,
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -36,13 +38,24 @@ function ExperiencePage() {
       ],
     },
   });
+  useEffect(() => {
+    const updatedData = watch();
+    console.log(updatedData);
+
+    localStorage.setItem("resume", JSON.stringify(updatedData));
+
+    console.log("change");
+  }, [watch()]);
+
   const { fields, append } = useFieldArray<IExperience>({
     control,
     name: "experience",
   });
+  // const [dataLocal, setDataLocal] = useState<IExperience>();
+
   const onSubmit: SubmitHandler<IExperience> = (data) => {
-    console.log("submitted");
     console.log(data);
+    // setDataLocal(data);
   };
 
   return (
