@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
-
+import { useNavigate } from "react-router-dom";
 interface IExperience {
   experience: {
     position: string;
@@ -14,6 +14,7 @@ interface IExperience {
 }
 
 function ExperiencePage() {
+  const navigate = useNavigate();
   const { handleSubmit, register, control } = useForm<IExperience>({
     defaultValues: {
       experience: [
@@ -36,6 +37,7 @@ function ExperiencePage() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
+        onClick={() => navigate(-1)}
         style={{
           alignSelf: "flex-start",
           paddingLeft: "4rem",
@@ -144,7 +146,9 @@ function ExperiencePage() {
               marginTop: "11.5rem",
             }}
           >
-            <Button type="button">უკან</Button>
+            <Button onClick={() => navigate(-1)} type="button">
+              უკან
+            </Button>
             <Button type="submit">შემდეგი</Button>
           </div>
         </Form>
