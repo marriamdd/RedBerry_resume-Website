@@ -10,4 +10,5 @@ export const Button = styled.button<{ padding?: string; bg?: string }>`
   letter-spacing: 1.28px;
   border: none;
   padding: ${(props) => (props.padding ? props.padding : "1.4rem 3.5rem")};
+  cursor: pointer;
 `;
