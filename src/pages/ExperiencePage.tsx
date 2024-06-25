@@ -4,6 +4,7 @@ import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
 import WarningIcon from "../assets/ph_warning-fill.svg";
 import { useNavigate } from "react-router-dom";
+import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
 import { useEffect } from "react";
 
@@ -38,24 +39,20 @@ function ExperiencePage() {
       ],
     },
   });
+
   useEffect(() => {
     const updatedData = watch();
-    console.log(updatedData);
 
     localStorage.setItem("resume", JSON.stringify(updatedData));
-
-    console.log("change");
   }, [watch()]);
 
   const { fields, append } = useFieldArray<IExperience>({
     control,
     name: "experience",
   });
-  // const [dataLocal, setDataLocal] = useState<IExperience>();
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     console.log(data);
-    // setDataLocal(data);
   };
 
   return (
@@ -87,7 +84,7 @@ function ExperiencePage() {
                 >
                   თანამდებობა
                 </Label>
-                <div>
+                <div style={{ position: "relative" }}>
                   <input
                     id={`experience[${index}].position`}
                     placeholder="დეველოპერი, დიზაინერი, ა.შ."
@@ -101,6 +98,17 @@ function ExperiencePage() {
                   {errors.experience?.[index]?.position && (
                     <img src={WarningIcon} alt="WarningIcon" />
                   )}
+                  {watch().experience[index].position.length >= 2 && (
+                    <img
+                      style={{
+                        position: "absolute",
+                        bottom: "1.5rem",
+                        right: "1.5rem",
+                      }}
+                      src={Validate}
+                      alt="ValidateIcon"
+                    />
+                  )}
                 </div>
 
                 <p>მინიმუმ 2 სიმბოლო</p>
@@ -112,7 +120,7 @@ function ExperiencePage() {
                 >
                   დამსაქმებელი
                 </Label>
-                <div>
+                <div style={{ position: "relative" }}>
                   <input
                     id={`experience[${index}].employer`}
                     placeholder="დამსაქმებელი"
@@ -122,8 +130,19 @@ function ExperiencePage() {
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   />
-                  {errors.experience?.[index]?.position && (
+                  {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
+                  )}
+                  {watch().experience[index].employer.length >= 2 && (
+                    <img
+                      style={{
+                        position: "absolute",
+                        bottom: "1.5rem",
+                        right: "1.5rem",
+                      }}
+                      src={Validate}
+                      alt="ValidateIcon"
+                    />
                   )}
                 </div>
 
@@ -132,7 +151,7 @@ function ExperiencePage() {
               <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
                   <Label
-                    error={errors.experience?.[index]?.employer?.message}
+                    error={errors.experience?.[index]?.startDate?.message}
                     htmlFor={`experience[${index}].startDate`}
                   >
                     დაწყების რიცხვი
@@ -147,7 +166,7 @@ function ExperiencePage() {
                 </div>
                 <div>
                   <Label
-                    error={errors.experience?.[index]?.employer?.message}
+                    error={errors.experience?.[index]?.endDate?.message}
                     htmlFor={`experience[${index}].endDate`}
                   >
                     დაწყების რიცხვი
@@ -174,7 +193,7 @@ function ExperiencePage() {
                 >
                   აღწერა
                 </Label>
-                <div>
+                <div style={{ position: "relative" }}>
                   <Textarea
                     error={errors.experience?.[index]?.description?.message}
                     id={`experience[${index}].description`}
@@ -184,8 +203,19 @@ function ExperiencePage() {
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   ></Textarea>
-                  {errors.experience?.[index]?.position && (
+                  {errors.experience?.[index]?.description && (
                     <img src={WarningIcon} alt="WarningIcon" />
+                  )}
+                  {watch().experience[index].description.length >= 2 && (
+                    <img
+                      style={{
+                        position: "absolute",
+                        top: "1.5rem",
+                        right: "1.5rem",
+                      }}
+                      src={Validate}
+                      alt="ValidateIcon"
+                    />
                   )}
                 </div>
               </TextInput>
