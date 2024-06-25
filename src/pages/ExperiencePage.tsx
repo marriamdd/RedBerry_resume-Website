@@ -4,6 +4,7 @@ import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
 import WarningIcon from "../assets/ph_warning-fill.svg";
 import { useNavigate } from "react-router-dom";
+import { Label, TextInput } from "../styles/FormStyles";
 
 interface IExperience {
   experience: {
@@ -41,6 +42,7 @@ function ExperiencePage() {
   });
   const onSubmit: SubmitHandler<IExperience> = (data) => console.log(data);
   console.log(errors);
+  console.log(errors.experience?.[0]?.employer?.message);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
@@ -63,19 +65,20 @@ function ExperiencePage() {
           {fields.map((field, index) => (
             <div className="fieldsDiv" style={{ width: "100%" }} key={field.id}>
               <TextInput error={errors.experience?.[index]?.position?.message}>
-                <label
+                <Label
+                  error={errors.experience?.[index]?.position?.message}
                   style={{ paddingTop: "2rem" }}
                   htmlFor={`experience[${index}].position`}
                 >
                   თანამდებობა
-                </label>
+                </Label>
                 <div>
                   <input
                     id={`experience[${index}].position`}
                     placeholder="დეველოპერი, დიზაინერი, ა.შ."
                     type="text"
                     {...register(`experience.${index}.position`, {
-                      required: true,
+                      required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   />
@@ -88,16 +91,19 @@ function ExperiencePage() {
                 <p>მინიმუმ 2 სიმბოლო</p>
               </TextInput>
               <TextInput error={errors.experience?.[index]?.employer?.message}>
-                <label htmlFor={`experience[${index}].employer`}>
+                <Label
+                  error={errors.experience?.[index]?.employer?.message}
+                  htmlFor={`experience[${index}].employer`}
+                >
                   დამსაქმებელი
-                </label>
+                </Label>
                 <div>
                   <input
                     id={`experience[${index}].employer`}
                     placeholder="დამსაქმებელი"
                     type="text"
                     {...register(`experience.${index}.employer`, {
-                      required: true,
+                      required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   />
@@ -110,9 +116,9 @@ function ExperiencePage() {
               </TextInput>
               <DateForm>
                 <div>
-                  <label htmlFor={`experience[${index}].startDate`}>
+                  <Label htmlFor={`experience[${index}].startDate`}>
                     დაწყების რიცხვი
-                  </label>
+                  </Label>
                   <input
                     id={`experience[${index}].startDate`}
                     type="date"
@@ -120,9 +126,9 @@ function ExperiencePage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor={`experience[${index}].endDate`}>
+                  <Label htmlFor={`experience[${index}].endDate`}>
                     დაწყების რიცხვი
-                  </label>
+                  </Label>
                   <input
                     id={`experience[${index}].endDate`}
                     type="date"
@@ -137,9 +143,12 @@ function ExperiencePage() {
                   borderBottom: "1px solid #C1C1C1",
                 }}
               >
-                <label htmlFor={`experience[${index}].description`}>
+                <Label
+                  error={errors.experience?.[index]?.description?.message}
+                  htmlFor={`experience[${index}].description`}
+                >
                   აღწერა
-                </label>
+                </Label>
                 <textarea
                   id={`experience[${index}].description`}
                   placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
@@ -173,10 +182,16 @@ function ExperiencePage() {
               marginTop: "11.5rem",
             }}
           >
-            <Button onClick={() => navigate(-1)} type="button">
+            <Button
+              style={{ marginBottom: "6.5rem" }}
+              onClick={() => navigate(-1)}
+              type="button"
+            >
               უკან
             </Button>
-            <Button type="submit">შემდეგი</Button>
+            <Button style={{ marginBottom: "6.5rem" }} type="submit">
+              შემდეგი
+            </Button>
           </div>
         </Form>
       </ExperiencePageStyles>
@@ -185,111 +200,84 @@ function ExperiencePage() {
 }
 
 export default ExperiencePage;
-// const DateForm = styled.div`
-//   display: flex;
+const DateForm = styled.div`
+  display: flex;
 
-//   justify-content: space-between;
-//   width: 100%;
-//   gap: 3.2rem;
-//   div {
-//     display: flex;
-//     flex-direction: column;
-//     flex: 1;
-//   }
-// `;
-// const Form = styled.form`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   gap: 4rem;
-//   .fieldsDiv {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 2rem;
-//   }
-// `;
-// const TextInput = styled.div<{ error?: string }>`
-//   width: 100%;
-//   display: flex;
-//   flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  gap: 3.2rem;
+  div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+`;
 
-//   gap: 1rem;
-//   div {
-//     display: flex;
-//     gap: 0.5rem;
-//   }
-//   label {
-//     color: ${(props) => (props.error ? "red" : "#000")};
-//   }
-//   input {
-//     border: ${(props) => (props.error ? "1px solid red" : "#bcbcbc")};
-//   }
-//   p {
-//     color: var(---500, #2e2e2e);
-//     font-size: 14px;
-//     font-weight: 300;
-//     line-height: 21px;
-//   }
-// `;
-// const ExperiencePageStyles = styled.div`
-//   width: 100%;
-//   display: flex;
-//   flex-direction: column;
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  .fieldsDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+`;
 
-//   justify-content: center;
-//   input {
-//     width: 100%;
-//     height: 48px;
-//     padding: 13px 16px 14px 16px;
-//     justify-content: center;
-//     align-items: center;
-//     flex-shrink: 0;
-//     align-self: stretch;
-//     border-radius: 4px;
-//     background: #fff;
-//   }
-//   textarea {
-//     padding: 13px 16px 89px 16px;
-//     justify-content: center;
-//     align-items: center;
+const ExperiencePageStyles = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 
-//     align-self: stretch;
-//     border-radius: 4px;
-//     border: 1px solid #bcbcbc;
-//     background: #fff;
+  justify-content: center;
+  input {
+    width: 100%;
+    height: 48px;
+    padding: 13px 16px 14px 16px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: 4px;
+    background: #fff;
+  }
+  textarea {
+    padding: 13px 16px 89px 16px;
+    justify-content: center;
+    align-items: center;
 
-//     font-size: 16px;
-//     font-style: normal;
-//     font-weight: 400;
-//     line-height: 21px;
-//   }
-//   label {
-//     margin-bottom: 1rem;
-//     font-size: 1.6rem;
+    align-self: stretch;
+    border-radius: 4px;
+    border: 1px solid #bcbcbc;
+    background: #fff;
 
-//     font-weight: 500;
-//     line-height: 21px;
-//   }
-//   .headerOfExperience {
-//     display: flex;
-//     align-items: center;
-//     padding-top: 4rem;
-//     padding-bottom: 5rem;
-//     span {
-//       margin-left: auto;
-//       margin-left: -2.8rem;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+  }
 
-//       text-align: right;
-//       font-size: 2rem;
-//       font-weight: 400;
-//     }
-//     h1 {
-//       padding-bottom: 1rem;
-//       border-bottom: 1px solid black;
-//       width: 100%;
-//       font-size: 2.4rem;
-//       font-weight: 700;
-//     }
-//   }
-// `;
+  .headerOfExperience {
+    display: flex;
+    align-items: center;
+    padding-top: 4rem;
+    padding-bottom: 5rem;
+    span {
+      margin-left: auto;
+      margin-left: -2.8rem;
+
+      text-align: right;
+      font-size: 2rem;
+      font-weight: 400;
+    }
+    h1 {
+      padding-bottom: 1rem;
+      border-bottom: 1px solid black;
+      width: 100%;
+      font-size: 2.4rem;
+      font-weight: 700;
+    }
+  }
+`;
