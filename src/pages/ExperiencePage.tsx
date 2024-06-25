@@ -61,6 +61,7 @@ function ExperiencePage() {
                   თანამდებობა
                 </label>
                 <input
+                  id={`experience[${index}].position`}
                   placeholder="დეველოპერი, დიზაინერი, ა.შ."
                   type="text"
                   {...register(`experience.${index}.position`)}
@@ -72,6 +73,7 @@ function ExperiencePage() {
                   დამსაქმებელი
                 </label>
                 <input
+                  id={`experience[${index}].employer`}
                   placeholder="დამსაქმებელი"
                   type="text"
                   {...register(`experience.${index}.employer`)}
@@ -84,6 +86,7 @@ function ExperiencePage() {
                     დაწყების რიცხვი
                   </label>
                   <input
+                    id={`experience[${index}].startDate`}
                     type="date"
                     {...register(`experience.${index}.startDate`)}
                   />
@@ -93,6 +96,7 @@ function ExperiencePage() {
                     დაწყების რიცხვი
                   </label>
                   <input
+                    id={`experience[${index}].endDate`}
                     type="date"
                     {...register(`experience.${index}.endDate`)}
                   />
@@ -108,6 +112,7 @@ function ExperiencePage() {
                   აღწერა
                 </label>
                 <textarea
+                  id={`experience[${index}].description`}
                   placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
                   {...register(`experience.${index}.description`)}
                 ></textarea>
