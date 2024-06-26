@@ -3,29 +3,36 @@ import styled from "styled-components";
 import { Context } from "../App";
 
 export default function Experience() {
-  const { experienceData } = useContext(Context);
+  const { experienceData, showExperienceInResume } = useContext(Context);
 
   return (
-    <StyledExperience>
-      <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
+    <>
+      {showExperienceInResume && (
+        <StyledExperience>
+          <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
 
-      {experienceData.experience.map((item) => (
-        <div>
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <h3>{item.position}</h3>
-            <h3>{item.employer}</h3>
-          </div>
+          {experienceData.experience.map((item) => (
+            <div>
+              {item.position ||
+                (item.employer && (
+                  <div style={{ display: "flex" }}>
+                    <h3>{item.position}</h3>
+                    <h3>{` , ${item.employer}`}</h3>
+                  </div>
+                ))}
 
-          {item.startDate ||
-            (item.endDate && (
-              <p className="date">
-                {item.startDate} - {item.endDate}
-              </p>
-            ))}
-          <p className="experience-text">{item.description}</p>
-        </div>
-      ))}
-    </StyledExperience>
+              {item.startDate ||
+                (item.endDate && (
+                  <p className="date">
+                    {item.startDate} - {item.endDate}
+                  </p>
+                ))}
+              <p className="experience-text">{item.description}</p>
+            </div>
+          ))}
+        </StyledExperience>
+      )}
+    </>
   );
 }
 

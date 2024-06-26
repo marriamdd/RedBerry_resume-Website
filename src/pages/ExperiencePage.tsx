@@ -10,8 +10,10 @@ import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
 
 function ExperiencePage() {
-  const { experienceData, setExperienceData } = useContext(Context);
+  const { experienceData, setExperienceData, setShowExperienceInResume } =
+    useContext(Context);
   const navigate = useNavigate();
+  setShowExperienceInResume(true);
   const {
     handleSubmit,
     register,

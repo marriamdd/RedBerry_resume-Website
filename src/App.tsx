@@ -22,7 +22,8 @@ export interface IContext {
   experienceData: IExperience;
   setExperienceData: React.Dispatch<React.SetStateAction<IExperience>>;
   currentPageNumber: number;
-
+  showExperienceInResume: boolean;
+  setShowExperienceInResume: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -34,8 +35,11 @@ export const Context = createContext<IContext>({
   },
 
   setExperienceData: () => {},
+  showExperienceInResume: false,
+  setShowExperienceInResume: () => {},
 });
 function App() {
+  const [showExperienceInResume, setShowExperienceInResume] = useState(false);
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [experienceData, setExperienceData] = useState<IExperience>(() => {
     const data = localStorage.getItem("resume");
@@ -53,6 +57,8 @@ function App() {
           setCurrentPageNumber,
           experienceData,
           setExperienceData,
+          showExperienceInResume,
+          setShowExperienceInResume,
         }}
       >
         <BrowserRouter>
