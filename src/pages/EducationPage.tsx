@@ -4,9 +4,28 @@ import { Line } from "../styles/Line";
 import downArrow from "../assets/downArrow.svg";
 import { useState } from "react";
 import { Button } from "../styles/Buttons";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+interface FormData {
+  university: string;
+  degree: string;
+  finish_date: string;
+  description: string;
+}
 
 function EducationPage() {
   const [isDegreeModalOpen, setIsDegreeModalOpen] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  console.log(errors);
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
+  };
 
   return (
     <StyledEducation>
@@ -18,46 +37,57 @@ function EducationPage() {
         </EducationHeader>
         <Line />
 
-        <Form>
-          <School>
-            <p>სასწავლებელი</p>
-            <input type="text" placeholder="სასწავლებელი" />
-            <span>მინიმუმ 2 სიმბოლო</span>
-          </School>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <DinamicField>
+            <School>
+              <p>სასწავლებელი</p>
+              <input
+                type="text"
+                placeholder="სასწავლებელი"
+                {...register("university", {
+                  required: { value: true, message: "required" },
+                })}
+              />
+              <span>მინიმუმ 2 სიმბოლო</span>
+            </School>
 
-          <DegreeAndGraduation>
-            <Degree>
-              <p>ხარისხი</p>
-              <Select>
-                <SelectValue
-                  onClick={() => setIsDegreeModalOpen((modal) => !modal)}
-                >
-                  <h3>აირჩიეთ ხარისხი</h3>
-                  <img src={downArrow} alt="down-arrow" />
-                </SelectValue>
+            <DegreeAndGraduation>
+              <Degree>
+                <p>ხარისხი</p>
+                <Select>
+                  <SelectValue
+                    onClick={() => setIsDegreeModalOpen((modal) => !modal)}
+                  >
+                    <h3>აირჩიეთ ხარისხი</h3>
+                    <img src={downArrow} alt="down-arrow" />
+                  </SelectValue>
 
-                {isDegreeModalOpen && (
-                  <SelectOptions>
-                    <h4>საშუალო სკოლის დიპლომი</h4>
-                    <h4>ზოგადსაგანმანათლებლო დიპლომი</h4>
-                    <h4>ragaca</h4>
-                    <h4>ragaca</h4>
-                    <h4>ragaca</h4>
-                    <h4>ragaca</h4>
-                  </SelectOptions>
-                )}
-              </Select>
-            </Degree>
-            <Graduation>
-              <p>დამთავრების რიცხვი</p>
-              <input type="date" />
-            </Graduation>
-          </DegreeAndGraduation>
+                  {isDegreeModalOpen && (
+                    <SelectOptions>
+                      <h4>საშუალო სკოლის დიპლომი</h4>
+                      <h4>ზოგადსაგანმანათლებლო დიპლომი</h4>
+                      <h4>ragaca</h4>
+                      <h4>ragaca</h4>
+                      <h4>ragaca</h4>
+                      <h4>ragaca</h4>
+                    </SelectOptions>
+                  )}
+                </Select>
+              </Degree>
+              <Graduation>
+                <p>დამთავრების რიცხვი</p>
+                <input type="date" {...register("finish_date")} />
+              </Graduation>
+            </DegreeAndGraduation>
 
-          <Description>
-            <p>აღწერა</p>
-            <textarea placeholder="განათლების აღწერა"></textarea>
-          </Description>
+            <Description>
+              <p>აღწერა</p>
+              <textarea
+                placeholder="განათლების აღწერა"
+                {...register("description")}
+              ></textarea>
+            </Description>
+          </DinamicField>
 
           <AddSchool>
             <Button padding="1.4rem 2.25rem" bg="#62A1EB">
@@ -137,9 +167,12 @@ const EducationHeader = styled.div`
 
 const Form = styled.form``;
 
+const DinamicField = styled.div``;
+
 const School = styled.div`
   & > input {
     margin-top: 0.8rem;
+    outline: none;
   }
 
   & > span {
@@ -184,6 +217,7 @@ const SelectValue = styled.div`
   padding: 1.3rem 1.6rem 1.4rem 1.6rem;
   border-radius: 4px 0px 0px 0px;
   background: #ffffff;
+  cursor: pointer;
 
   & > h3 {
     font-size: 1.6rem;
