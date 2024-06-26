@@ -254,7 +254,7 @@ function PersonalPage() {
             <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
           </TextInput>
           <div style={{ display: "flex",  justifyContent: "flex-end", marginTop: "10.5rem"}}>
-            <Button>ᲨᲔᲛᲓᲔᲒᲘ</Button>
+            <Button type="button">ᲨᲔᲛᲓᲔᲒᲘ</Button>
           </div>
         </form>
       </div>
