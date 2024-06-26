@@ -4,7 +4,9 @@ import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
 import WarningIcon from "../assets/ph_warning-fill.svg";
 import { useNavigate } from "react-router-dom";
+import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
+import { useEffect } from "react";
 
 interface IExperience {
   experience: {
@@ -22,6 +24,7 @@ function ExperiencePage() {
     handleSubmit,
     register,
     control,
+    watch,
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -36,13 +39,22 @@ function ExperiencePage() {
       ],
     },
   });
+
+  useEffect(() => {
+    const updatedData = watch();
+
+    localStorage.setItem("resume", JSON.stringify(updatedData));
+  }, [watch()]);
+
   const { fields, append } = useFieldArray<IExperience>({
     control,
     name: "experience",
   });
-  const onSubmit: SubmitHandler<IExperience> = (data) => console.log(data);
-  console.log(errors);
-  console.log(errors.experience?.[0]?.employer?.message);
+
+  const onSubmit: SubmitHandler<IExperience> = (data) => {
+    console.log(data);
+  };
+
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
@@ -72,7 +84,7 @@ function ExperiencePage() {
                 >
                   თანამდებობა
                 </Label>
-                <div>
+                <div style={{ position: "relative" }}>
                   <input
                     id={`experience[${index}].position`}
                     placeholder="დეველოპერი, დიზაინერი, ა.შ."
@@ -86,6 +98,17 @@ function ExperiencePage() {
                   {errors.experience?.[index]?.position && (
                     <img src={WarningIcon} alt="WarningIcon" />
                   )}
+                  {watch().experience[index].position.length >= 2 && (
+                    <img
+                      style={{
+                        position: "absolute",
+                        bottom: "1.5rem",
+                        right: "1.5rem",
+                      }}
+                      src={Validate}
+                      alt="ValidateIcon"
+                    />
+                  )}
                 </div>
 
                 <p>მინიმუმ 2 სიმბოლო</p>
@@ -97,7 +120,7 @@ function ExperiencePage() {
                 >
                   დამსაქმებელი
                 </Label>
-                <div>
+                <div style={{ position: "relative" }}>
                   <input
                     id={`experience[${index}].employer`}
                     placeholder="დამსაქმებელი"
@@ -107,32 +130,53 @@ function ExperiencePage() {
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   />
-                  {errors.experience?.[index]?.position && (
+                  {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
+                  )}
+                  {watch().experience[index].employer.length >= 2 && (
+                    <img
+                      style={{
+                        position: "absolute",
+                        bottom: "1.5rem",
+                        right: "1.5rem",
+                      }}
+                      src={Validate}
+                      alt="ValidateIcon"
+                    />
                   )}
                 </div>
 
                 <p>მინიმუმ 2 სიმბოლო</p>
               </TextInput>
-              <DateForm>
+              <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
-                  <Label htmlFor={`experience[${index}].startDate`}>
+                  <Label
+                    error={errors.experience?.[index]?.startDate?.message}
+                    htmlFor={`experience[${index}].startDate`}
+                  >
                     დაწყების რიცხვი
                   </Label>
                   <input
                     id={`experience[${index}].startDate`}
                     type="date"
-                    {...register(`experience.${index}.startDate`)}
+                    {...register(`experience.${index}.startDate`, {
+                      required: { value: true, message: "required" },
+                    })}
                   />
                 </div>
                 <div>
-                  <Label htmlFor={`experience[${index}].endDate`}>
+                  <Label
+                    error={errors.experience?.[index]?.endDate?.message}
+                    htmlFor={`experience[${index}].endDate`}
+                  >
                     დაწყების რიცხვი
                   </Label>
                   <input
                     id={`experience[${index}].endDate`}
                     type="date"
-                    {...register(`experience.${index}.endDate`)}
+                    {...register(`experience.${index}.endDate`, {
+                      required: { value: true, message: "required" },
+                    })}
                   />
                 </div>
               </DateForm>
@@ -149,11 +193,31 @@ function ExperiencePage() {
                 >
                   აღწერა
                 </Label>
-                <textarea
-                  id={`experience[${index}].description`}
-                  placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
-                  {...register(`experience.${index}.description`)}
-                ></textarea>
+                <div style={{ position: "relative" }}>
+                  <Textarea
+                    error={errors.experience?.[index]?.description?.message}
+                    id={`experience[${index}].description`}
+                    placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
+                    {...register(`experience.${index}.description`, {
+                      required: { value: true, message: "required" },
+                      minLength: { value: 2, message: "Minimum 2 characters" },
+                    })}
+                  ></Textarea>
+                  {errors.experience?.[index]?.description && (
+                    <img src={WarningIcon} alt="WarningIcon" />
+                  )}
+                  {watch().experience[index].description.length >= 2 && (
+                    <img
+                      style={{
+                        position: "absolute",
+                        top: "1.5rem",
+                        right: "1.5rem",
+                      }}
+                      src={Validate}
+                      alt="ValidateIcon"
+                    />
+                  )}
+                </div>
               </TextInput>
             </div>
           ))}
@@ -200,7 +264,7 @@ function ExperiencePage() {
 }
 
 export default ExperiencePage;
-const DateForm = styled.div`
+const DateForm = styled.div<{ error?: string }>`
   display: flex;
 
   justify-content: space-between;
@@ -210,6 +274,10 @@ const DateForm = styled.div`
     display: flex;
     flex-direction: column;
     flex: 1;
+  }
+  input {
+    border: ${(props) => (props.error ? "1px solid red" : "1px solid #bcbcbc")};
+    background: #fff;
   }
 `;
 
@@ -225,8 +293,22 @@ const Form = styled.form`
     gap: 2rem;
   }
 `;
+const Textarea = styled.textarea<{ error?: string }>`
+  padding: 13px 16px 89px 16px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  align-self: stretch;
+  border-radius: 4px;
+  border: ${(props) => (props.error ? "1px solid red" : "1px solid #bcbcbc")};
+  background: #fff;
 
-const ExperiencePageStyles = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 21px;
+`;
+const ExperiencePageStyles = styled.div<{ error?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -242,21 +324,6 @@ const ExperiencePageStyles = styled.div`
     align-self: stretch;
     border-radius: 4px;
     background: #fff;
-  }
-  textarea {
-    padding: 13px 16px 89px 16px;
-    justify-content: center;
-    align-items: center;
-
-    align-self: stretch;
-    border-radius: 4px;
-    border: 1px solid #bcbcbc;
-    background: #fff;
-
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 21px;
   }
 
   .headerOfExperience {
