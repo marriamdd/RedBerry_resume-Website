@@ -3,28 +3,38 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState, useRef } from "react";
 import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
+
+interface IFormInput {
+  name: string;
+  surname: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  data: string;
+}
+
 function PersonalPage() {
   const MainDiv = styled.div`
     display: flex;
     align-items: center;
+    padding: 2rem;
+
     .fieldsDiv {
       margin-top: 7rem;
       width: 100%;
+      display: flex;
       flex-direction: column;
       justify-content: center;
+      gap: 1.5rem;
     }
-    .info::placeholder {
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 1.6rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 2.1rem;
-    }
+
     .upload {
       display: flex;
       width: 10.7rem;
       height: 2.7rem;
-      padding: 1rem 1rem 1.2rem 1rem;
       justify-content: center;
       align-items: center;
       gap: 1rem;
@@ -34,30 +44,32 @@ function PersonalPage() {
       color: #fff;
       font-size: 1.4rem;
       font-weight: 400;
+      cursor: pointer;
     }
 
     .info {
       all: unset;
       display: flex;
-      padding: 1.3rem 1.6rem 6.9rem 1.6rem;
+      padding: 1.3rem;
       justify-content: center;
       align-items: center;
-      flex: 1 0 0;
-      align-self: stretch;
       border-radius: 0.4rem;
       border: 1px solid #bcbcbc;
       background: #fff;
       width: 100%;
       margin-top: 0.8rem;
+      resize: none;
+      min-height: 10rem;
     }
-    .input {
+    input {
       display: flex;
-      height: 4.8rem;
-      padding: 1.3rem 1.6rem 1.4rem 1.6rem;
+      height: 48px;
+      padding: 13px 16px 14px 16px;
       justify-content: center;
       align-items: center;
+      flex-shrink: 0;
       align-self: stretch;
-      border-radius: 0.4rem;
+      border-radius: 4px;
       border: 1px solid #bcbcbc;
       background: #fff;
     }
@@ -65,6 +77,8 @@ function PersonalPage() {
 
   const Header = styled.header`
     display: flex;
+    align-items: center;
+    gap: 2rem;
   `;
 
   const InfoContainer = styled.div`
@@ -87,16 +101,18 @@ function PersonalPage() {
 
   const HeaderHr = styled.hr`
     width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
   `;
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
     watch,
-  } = useForm();
+  } = useForm<IFormInput>();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: IFormInput) => {
     console.log(data);
   };
 
@@ -105,19 +121,21 @@ function PersonalPage() {
     localStorage.setItem("watchFields", JSON.stringify(watchFields));
   }, [watch()]);
 
-  const [avatar, setAvatar] = useState();
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const fileUploadRef = useRef<HTMLInputElement | null>(null);
 
-  const fileUploadRef = useRef();
-  const handleImageChange = (event) => {
-    event.preventDefault();
-    fileUploadRef.current.click();
+  const handleImageChange = () => {
+    if (fileUploadRef.current) {
+      fileUploadRef.current.click();
+    }
   };
 
   const uploadImageDisplay = () => {
-    const uploadFile = fileUploadRef.current.files[0];
-
-    const cachedURL = URL.createObjectURL(uploadFile);
-    setAvatar(cachedURL);
+    const uploadFile = fileUploadRef.current?.files?.[0];
+    if (uploadFile) {
+      const cachedURL = URL.createObjectURL(uploadFile);
+      setAvatar(cachedURL);
+    }
   };
 
   return (
@@ -138,26 +156,26 @@ function PersonalPage() {
         <form className="fieldsDiv" onSubmit={handleSubmit(onSubmit)}>
           <div style={{ display: "flex", gap: "2.4rem" }}>
             <TextInput>
-              <Label className="label" htmlFor="username">
+              <Label className="label" htmlFor="name">
                 სახელი
               </Label>
               <input
                 className="input"
-                id="username"
+                id="name"
                 type="text"
-                {...register("username", {
-                  required: true,
+                {...register("name", {
+                  required: "სახელის ველი სავალდებულოა",
                   minLength: {
                     value: 2,
-                    message: "მინიმუმ 2 ასო, ქართული ასოები",
+                    message: "მინიმუმ 2 ასო",
                   },
                   pattern: {
-                    value: /^[A-Za-z]+$/i,
-                    message: "მინიმუმ 2 ასო, ქართული ასოები",
+                    value: /^[ა-ჰ]+$/,
+                    message: "მხოლოდ ქართული ასოები",
                   },
                 })}
               />
-              <p>მინიმუმ 2 ასო, ქართული ასოები</p>
+              <p>მინიმუმ 2 ასო, ქართული ასო</p>
             </TextInput>
 
             <TextInput>
@@ -168,19 +186,19 @@ function PersonalPage() {
                 className="input"
                 id="surname"
                 type="text"
-                {...register("text", {
-                  required: "მინიმუმ 2 ასო, ქართული ასოები",
+                {...register("surname", {
+                  required: "გვარის ველი სავალდებულოა",
                   minLength: {
                     value: 2,
-                    message: "მინიმუმ 2 ასო, ქართული ასოები",
+                    message: "მინიმუმ 2 ასო",
                   },
                   pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: "მინიმუმ 2 ასო, ქართული ასოები",
+                    value: /^[ა-ჰ]+$/,
+                    message: "მხოლოდ ქართული ასოები",
                   },
                 })}
               />
-              <p>მინიმუმ 2 ასო, ქართული ასოები</p>
+              <p>მინიმუმ 2 ასო, ქართული ასო</p>
             </TextInput>
           </div>
           <div
@@ -206,6 +224,7 @@ function PersonalPage() {
             >
               ატვირთვა
             </button>
+            {avatar && <img src={avatar} alt="Uploaded avatar" />}
           </div>
           <div>
             <Label htmlFor="info">ჩემ შესახებ (არასავალდებულო)</Label>
@@ -221,16 +240,12 @@ function PersonalPage() {
             <input
               className="input"
               id="email"
-              type="text"
-              {...register("text", {
-                required: "მინიმუმ 2 ასო, ქართული ასოები",
-                minLength: {
-                  value: 2,
-                  message: "მინიმუმ 2 ასო, ქართული ასოები",
-                },
+              type="email"
+              {...register("email", {
+                required: "ელ.ფოსტა სავალდებულოა",
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                  message: "მინიმუმ 2 ასო, ქართული ასოები",
+                  message: "გთხოვთ, მიუთითოთ სწორი ელ.ფოსტა",
                 },
               })}
             />
@@ -242,19 +257,25 @@ function PersonalPage() {
               className="input"
               id="phone"
               type="text"
-              {...register("text", {
-                required: "მინიმუმ 2 ასო, ქართული ასოები",
-                minLength: {
-                  value: 2,
-                  message: "მინიმუმ 2 ასო, ქართული ასოები",
+              {...register("phone", {
+                required: "მობილურის ნომერი სავალდებულოა",
+                pattern: {
+                  value: /^\+995\d{9}$/,
+                  message:
+                    "უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს",
                 },
-                pattern: {},
               })}
-            ></input>
+            />
             <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
           </TextInput>
-          <div style={{ display: "flex",  justifyContent: "flex-end", marginTop: "10.5rem"}}>
-            <Button type="button">ᲨᲔᲛᲓᲔᲒᲘ</Button>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "10.5rem",
+            }}
+          >
+            <Button type="submit">ᲨᲔᲛᲓᲔᲒᲘ</Button>
           </div>
         </form>
       </div>
