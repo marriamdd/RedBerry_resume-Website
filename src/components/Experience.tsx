@@ -1,17 +1,30 @@
+import { useContext } from "react";
 import styled from "styled-components";
+import { Context } from "../App";
 
 export default function Experience() {
+  const { experienceData } = useContext(Context);
+
   return (
     <StyledExperience>
       <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
-      <h3>React Native Developer, Microsoft</h3>
-      <p className="date">2020-09-23 - 2020-09-23</p>
-      <p className="experience-text">
-        Experienced Javascript Native Developer with 5 years in the industry.
-        proficient withreact. Used problem-solving aptitude to encahge
-        application performance by 14%.created data visualisation tools and
-        integrated designs.
-      </p>
+
+      {experienceData.experience.map((item) => (
+        <div>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <h3>{item.position}</h3>
+            <h3>{item.employer}</h3>
+          </div>
+
+          {item.startDate ||
+            (item.endDate && (
+              <p className="date">
+                {item.startDate} - {item.endDate}
+              </p>
+            ))}
+          <p className="experience-text">{item.description}</p>
+        </div>
+      ))}
     </StyledExperience>
   );
 }
@@ -25,10 +38,16 @@ const StyledExperience = styled.div`
 
   & > h3 {
     margin-top: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 500;
   }
 
   & > p {
     margin-top: 0.7rem;
+
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 2.2rem;
   }
 
   & > .experience-text {

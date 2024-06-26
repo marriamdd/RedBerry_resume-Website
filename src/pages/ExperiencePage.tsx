@@ -3,22 +3,14 @@ import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
 import WarningIcon from "../assets/ph_warning-fill.svg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
-import { useEffect } from "react";
-
-interface IExperience {
-  experience: {
-    position: string;
-    employer: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }[];
-}
+import { useContext, useEffect } from "react";
+import { Context, IExperience } from "../App";
 
 function ExperiencePage() {
+  const { experienceData, setExperienceData } = useContext(Context);
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -39,12 +31,34 @@ function ExperiencePage() {
       ],
     },
   });
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.experience) {
+        const updatedExperienceData: IExperience = {
+          experience: value.experience.map((item) => ({
+            position: item?.position || "",
+            employer: item?.employer || "",
+            startDate: item?.startDate || "",
+            endDate: item?.endDate || "",
+            description: item?.description || "",
+          })),
+        };
+        localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
+        setExperienceData(updatedExperienceData);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setExperienceData]);
 
   useEffect(() => {
-    const updatedData = watch();
+    const data = localStorage.getItem("resume");
+    if (data) {
+      const json = JSON.parse(data);
+      setExperienceData(json);
+    }
+  }, [setExperienceData]);
 
-    localStorage.setItem("resume", JSON.stringify(updatedData));
-  }, [watch()]);
+  console.log(experienceData);
 
   const { fields, append } = useFieldArray<IExperience>({
     control,
@@ -254,7 +268,7 @@ function ExperiencePage() {
               უკან
             </Button>
             <Button style={{ marginBottom: "6.5rem" }} type="submit">
-              შემდეგი
+              <Link to={"/education"}> შემდეგი </Link>
             </Button>
           </div>
         </Form>
@@ -314,6 +328,10 @@ const ExperiencePageStyles = styled.div<{ error?: string }>`
   flex-direction: column;
 
   justify-content: center;
+  a {
+    text-decoration: none;
+    color: white;
+  }
   input {
     width: 100%;
     height: 48px;
