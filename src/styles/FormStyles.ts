@@ -20,7 +20,7 @@ export const TextInput = styled.div<{ error?: string }>`
   }
 
   input {
-    border: ${(props) => (props.error ? "1px solid red" : "#bcbcbc")};
+    border: ${(props) => (props.error ? "1px solid red" : "1px solid #bcbcbc")};
   }
   p {
     color: var(---500, #2e2e2e);
