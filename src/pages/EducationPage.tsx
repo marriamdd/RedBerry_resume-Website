@@ -39,7 +39,7 @@ function EducationPage() {
 
         <Form onSubmit={handleSubmit(onSubmit)}>
           <DinamicField>
-            <School>
+            <School error={errors.university?.message}>
               <p>სასწავლებელი</p>
               <input
                 type="text"
@@ -169,10 +169,11 @@ const Form = styled.form``;
 
 const DinamicField = styled.div``;
 
-const School = styled.div`
+const School = styled.div<{ error?: string }>`
   & > input {
     margin-top: 0.8rem;
     outline: none;
+    border: ${(props) => (props.error ? "1px solid red" : "none")};
   }
 
   & > span {
