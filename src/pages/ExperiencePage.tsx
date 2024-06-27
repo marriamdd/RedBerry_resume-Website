@@ -57,23 +57,19 @@ function ExperiencePage() {
     });
 
     return () => subscription.unsubscribe();
-  }, [watch]);
+  }, [watch, setExperienceData]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("resume");
     if (storedData) {
-      try {
-        const data = JSON.parse(storedData);
-        if (data && data.experience) {
-          reset({
-            experience: data.experience.map((item: IExperience) => item),
-          });
-        }
-      } catch (error) {
-        console.error("Failed to parse local storage data", error);
+      const data = JSON.parse(storedData);
+      if (data && data.experience) {
+        reset({
+          experience: data.experience.map((item: IExperience) => item),
+        });
       }
     }
-  }, [append, fields.length]);
+  }, [append, reset, fields.length]);
 
   useEffect(() => {
     const data = localStorage.getItem("resume");
@@ -86,6 +82,27 @@ function ExperiencePage() {
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     console.log(data);
     navigate("/education");
+  };
+  const handleGeorgianInput = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    const georgianPattern = /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/;
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "Home",
+      "End",
+    ];
+
+    if (allowedKeys.includes(event.key) || georgianPattern.test(event.key)) {
+      return;
+    } else {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -126,6 +143,7 @@ function ExperiencePage() {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
+                    onKeyDown={handleGeorgianInput}
                   />
 
                   {errors.experience?.[index]?.position && (
