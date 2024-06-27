@@ -85,8 +85,10 @@ function ExperiencePage() {
     console.log(data);
     navigate("/education");
   };
-  const handleGeorgianInput = useGeorgianPattern();
-  const handleTextareaGeorgian = useGeorgianPatternTextarea();
+  const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
+  const { handleTextarea, geoErrorMessageTextarea } =
+    useGeorgianPatternTextarea();
+  console.log(geoErrorMessage);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
@@ -124,6 +126,10 @@ function ExperiencePage() {
                     {...register(`experience.${index}.position`, {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
+                      pattern: {
+                        value: /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/,
+                        message: "Only Georgian characters allowed",
+                      },
                     })}
                     onKeyDown={handleGeorgianInput}
                   />
@@ -131,6 +137,7 @@ function ExperiencePage() {
                   {errors.experience?.[index]?.position && (
                     <img src={WarningIcon} alt="WarningIcon" />
                   )}
+
                   {watch().experience[index].position.length >= 2 && (
                     <img
                       style={{
@@ -144,7 +151,15 @@ function ExperiencePage() {
                   )}
                 </div>
 
-                <p>მინიმუმ 2 სიმბოლო</p>
+                <p>
+                  მინიმუმ 2{" "}
+                  {geoErrorMessage[`experience[${index}].position`] && (
+                    <span style={{ color: "red" }}>
+                      {geoErrorMessage[`experience[${index}].position`]}&nbsp;
+                    </span>
+                  )}
+                  სიმბოლო
+                </p>
               </TextInput>
               <TextInput error={errors.experience?.[index]?.employer?.message}>
                 <Label
@@ -162,7 +177,7 @@ function ExperiencePage() {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    onKeyDown={handleGeorgianInput}
+                    onKeyDown={(event) => handleGeorgianInput(event)}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -180,7 +195,15 @@ function ExperiencePage() {
                   )}
                 </div>
 
-                <p>მინიმუმ 2 სიმბოლო</p>
+                <p>
+                  მინიმუმ 2{" "}
+                  {geoErrorMessage[`experience[${index}].employer`] && (
+                    <span style={{ color: "red" }}>
+                      {geoErrorMessage[`experience[${index}].employer`]} &nbsp;
+                    </span>
+                  )}
+                  სიმბოლო
+                </p>
               </TextInput>
               <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
@@ -230,19 +253,20 @@ function ExperiencePage() {
                 </Label>
                 <div style={{ position: "relative" }}>
                   <Textarea
-                    onKeyDown={handleTextareaGeorgian}
+                    onKeyDown={(e) => handleTextarea(e)}
                     error={errors.experience?.[index]?.description?.message}
                     id={`experience[${index}].description`}
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
                     {...register(`experience.${index}.description`, {
                       required: { value: true, message: "required" },
-                      minLength: { value: 2, message: "Minimum 2 characters" },
+                      minLength: { value: 5, message: "Minimum 5 characters" },
                     })}
                   ></Textarea>
+
                   {errors.experience?.[index]?.description && (
                     <img src={WarningIcon} alt="WarningIcon" />
                   )}
-                  {watch().experience[index].description.length >= 2 && (
+                  {watch().experience[index].description.length >= 5 && (
                     <img
                       style={{
                         position: "absolute",
@@ -254,6 +278,18 @@ function ExperiencePage() {
                     />
                   )}
                 </div>
+                {geoErrorMessageTextarea[
+                  `experience[${index}].description`
+                ] && (
+                  <p style={{ color: "red" }}>
+                    {
+                      geoErrorMessageTextarea[
+                        `experience[${index}].description`
+                      ]
+                    }
+                    &nbsp;
+                  </p>
+                )}
               </TextInput>
             </div>
           ))}

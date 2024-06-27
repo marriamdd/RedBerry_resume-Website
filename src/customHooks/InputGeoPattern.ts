@@ -1,4 +1,9 @@
+import { useState } from "react";
+
 const useGeorgianPattern = () => {
+  const [geoErrorMessage, setGeoErrorMessage] = useState<{
+    [key: string]: string;
+  }>({});
   const handleGeorgianInput = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -13,15 +18,23 @@ const useGeorgianPattern = () => {
       "Home",
       "End",
     ];
-
+    const currentId = event.currentTarget.id;
     if (allowedKeys.includes(event.key) || georgianPattern.test(event.key)) {
+      setGeoErrorMessage((prevErrors) => ({
+        ...prevErrors,
+        [currentId]: "",
+      }));
       return;
     } else {
-      event.preventDefault();
+      setGeoErrorMessage((prevErrors) => ({
+        ...prevErrors,
+        [currentId]: "ქართული",
+      }));
+      return event.preventDefault();
     }
   };
 
-  return handleGeorgianInput;
+  return { handleGeorgianInput, geoErrorMessage };
 };
 
 export default useGeorgianPattern;
