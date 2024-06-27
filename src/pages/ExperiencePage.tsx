@@ -10,8 +10,7 @@ import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
 
 function ExperiencePage() {
-  const { experienceData, setExperienceData, setShowExperienceInResume } =
-    useContext(Context);
+  const { setExperienceData, setShowExperienceInResume } = useContext(Context);
   const navigate = useNavigate();
   setShowExperienceInResume(true);
   const {
@@ -20,7 +19,7 @@ function ExperiencePage() {
     control,
     watch,
     reset,
-    setValue,
+
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -61,12 +60,20 @@ function ExperiencePage() {
   }, [watch]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("resume") || "");
-    console.log(data);
-    reset({
-      experience: data.experience.map((item: IExperience) => item),
-    });
-  }, [append, setValue, fields.length]);
+    const storedData = localStorage.getItem("resume");
+    if (storedData) {
+      try {
+        const data = JSON.parse(storedData);
+        if (data && data.experience) {
+          reset({
+            experience: data.experience.map((item: IExperience) => item),
+          });
+        }
+      } catch (error) {
+        console.error("Failed to parse local storage data", error);
+      }
+    }
+  }, [append, fields.length]);
 
   useEffect(() => {
     const data = localStorage.getItem("resume");
@@ -75,8 +82,6 @@ function ExperiencePage() {
       setExperienceData(json);
     }
   }, [setExperienceData]);
-
-  console.log(experienceData);
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     console.log(data);
