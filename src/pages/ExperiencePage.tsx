@@ -6,25 +6,22 @@ import WarningIcon from "../assets/ph_warning-fill.svg";
 import { useNavigate } from "react-router-dom";
 import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
-import { useEffect } from "react";
-
-interface IExperience {
-  experience: {
-    position: string;
-    employer: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }[];
-}
+import { useContext, useEffect } from "react";
+import { Context, IExperience } from "../App";
+import useGeorgianPattern from "../customHooks/InputGeoPattern";
+import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
 function ExperiencePage() {
+  const { setExperienceData, setShowExperienceInResume } = useContext(Context);
   const navigate = useNavigate();
+  setShowExperienceInResume(true);
   const {
     handleSubmit,
     register,
     control,
     watch,
+    reset,
+
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -40,21 +37,58 @@ function ExperiencePage() {
     },
   });
 
-  useEffect(() => {
-    const updatedData = watch();
-
-    localStorage.setItem("resume", JSON.stringify(updatedData));
-  }, [watch()]);
-
   const { fields, append } = useFieldArray<IExperience>({
     control,
     name: "experience",
   });
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.experience) {
+        const updatedExperienceData = {
+          experience: value.experience.map((item) => ({
+            position: item?.position || "",
+            employer: item?.employer || "",
+            startDate: item?.startDate || "",
+            endDate: item?.endDate || "",
+            description: item?.description || "",
+          })),
+        };
+        localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
+        setExperienceData(updatedExperienceData);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setExperienceData]);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("resume");
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      if (data && data.experience) {
+        reset({
+          experience: data.experience.map((item: IExperience) => item),
+        });
+      }
+    }
+  }, [append, reset, fields.length]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("resume");
+    if (data) {
+      const json = JSON.parse(data);
+      setExperienceData(json);
+    }
+  }, [setExperienceData]);
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     console.log(data);
+    navigate("/education");
   };
-
+  const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
+  const { handleTextarea, geoErrorMessageTextarea } =
+    useGeorgianPatternTextarea();
+  console.log(geoErrorMessage);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
@@ -92,12 +126,18 @@ function ExperiencePage() {
                     {...register(`experience.${index}.position`, {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
+                      pattern: {
+                        value: /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/,
+                        message: "Only Georgian characters allowed",
+                      },
                     })}
+                    onKeyDown={handleGeorgianInput}
                   />
 
                   {errors.experience?.[index]?.position && (
                     <img src={WarningIcon} alt="WarningIcon" />
                   )}
+
                   {watch().experience[index].position.length >= 2 && (
                     <img
                       style={{
@@ -111,7 +151,15 @@ function ExperiencePage() {
                   )}
                 </div>
 
-                <p>მინიმუმ 2 სიმბოლო</p>
+                <p>
+                  მინიმუმ 2{" "}
+                  {geoErrorMessage[`experience[${index}].position`] && (
+                    <span style={{ color: "red" }}>
+                      {geoErrorMessage[`experience[${index}].position`]}&nbsp;
+                    </span>
+                  )}
+                  სიმბოლო
+                </p>
               </TextInput>
               <TextInput error={errors.experience?.[index]?.employer?.message}>
                 <Label
@@ -129,6 +177,7 @@ function ExperiencePage() {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
+                    onKeyDown={(event) => handleGeorgianInput(event)}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -146,7 +195,15 @@ function ExperiencePage() {
                   )}
                 </div>
 
-                <p>მინიმუმ 2 სიმბოლო</p>
+                <p>
+                  მინიმუმ 2{" "}
+                  {geoErrorMessage[`experience[${index}].employer`] && (
+                    <span style={{ color: "red" }}>
+                      {geoErrorMessage[`experience[${index}].employer`]} &nbsp;
+                    </span>
+                  )}
+                  სიმბოლო
+                </p>
               </TextInput>
               <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
@@ -186,6 +243,7 @@ function ExperiencePage() {
                   paddingBottom: "5rem",
                   borderBottom: "1px solid #C1C1C1",
                 }}
+                onKeyDown={handleGeorgianInput}
               >
                 <Label
                   error={errors.experience?.[index]?.description?.message}
@@ -195,18 +253,20 @@ function ExperiencePage() {
                 </Label>
                 <div style={{ position: "relative" }}>
                   <Textarea
+                    onKeyDown={(e) => handleTextarea(e)}
                     error={errors.experience?.[index]?.description?.message}
                     id={`experience[${index}].description`}
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
                     {...register(`experience.${index}.description`, {
                       required: { value: true, message: "required" },
-                      minLength: { value: 2, message: "Minimum 2 characters" },
+                      minLength: { value: 5, message: "Minimum 5 characters" },
                     })}
                   ></Textarea>
+
                   {errors.experience?.[index]?.description && (
                     <img src={WarningIcon} alt="WarningIcon" />
                   )}
-                  {watch().experience[index].description.length >= 2 && (
+                  {watch().experience[index].description.length >= 5 && (
                     <img
                       style={{
                         position: "absolute",
@@ -218,6 +278,18 @@ function ExperiencePage() {
                     />
                   )}
                 </div>
+                {geoErrorMessageTextarea[
+                  `experience[${index}].description`
+                ] && (
+                  <p style={{ color: "red" }}>
+                    {
+                      geoErrorMessageTextarea[
+                        `experience[${index}].description`
+                      ]
+                    }
+                    &nbsp;
+                  </p>
+                )}
               </TextInput>
             </div>
           ))}
@@ -314,6 +386,7 @@ const ExperiencePageStyles = styled.div<{ error?: string }>`
   flex-direction: column;
 
   justify-content: center;
+
   input {
     width: 100%;
     height: 48px;

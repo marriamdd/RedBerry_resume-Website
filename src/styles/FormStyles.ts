@@ -24,8 +24,8 @@ export const TextInput = styled.div<{ error?: string }>`
   }
   p {
     color: var(---500, #2e2e2e);
-    font-size: 14px;
+    font-size: 1.4rem;
     font-weight: 300;
-    line-height: 21px;
+    line-height: 2.1rem;
   }
 `;

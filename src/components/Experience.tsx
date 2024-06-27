@@ -1,37 +1,78 @@
+import { useContext } from "react";
 import styled from "styled-components";
+import { Context } from "../App";
 
 export default function Experience() {
+  const { experienceData } = useContext(Context);
+
   return (
-    <StyledExperience>
-      <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
-      <h3>React Native Developer, Microsoft</h3>
-      <p className="date">2020-09-23 - 2020-09-23</p>
-      <p className="experience-text">
-        Experienced Javascript Native Developer with 5 years in the industry.
-        proficient withreact. Used problem-solving aptitude to encahge
-        application performance by 14%.created data visualisation tools and
-        integrated designs.
-      </p>
-    </StyledExperience>
+    <>
+      {
+        <StyledExperience>
+          <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
+
+          {experienceData.experience.map((item, index) => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "2rem",
+                width: "100%",
+              }}
+              key={index}
+            >
+              <div style={{ display: "flex" }}>
+                <h3>{`${item.position} `}</h3>
+
+                {item.employer && <h3>&nbsp;, {item.employer}</h3>}
+              </div>
+
+              <div style={{ display: "flex" }}>
+                <span>{`${item.startDate} `}</span>
+
+                {item.endDate && <span>&nbsp;- {item.endDate}</span>}
+              </div>
+              <p className="experience-text">{item.description}</p>
+            </div>
+          ))}
+        </StyledExperience>
+      }
+    </>
   );
 }
 
 const StyledExperience = styled.div`
   border-bottom: 1px solid #c8c8c8;
   padding-bottom: 3.2rem;
-  & > h2 {
+  width: 100%;
+
+  h2 {
     margin-top: 2.4rem;
   }
-
-  & > h3 {
+  span {
+    color: #909090;
+    font-size: 1.6rem;
+    font-weight: 400;
+  }
+  h3 {
     margin-top: 1.5rem;
+    font-size: 1.6rem;
+
+    color: var(--off-black, #1a1a1a);
+
+    font-size: 1.7rem;
+    font-weight: 700;
   }
 
-  & > p {
+  p {
     margin-top: 0.7rem;
+
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 2.2rem;
   }
 
-  & > .experience-text {
+  .experience-text {
     margin-top: 1.6rem;
   }
 `;
