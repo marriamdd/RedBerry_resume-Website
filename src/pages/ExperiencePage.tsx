@@ -3,7 +3,7 @@ import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import BackArrow from "../assets/Group 4.svg";
 import { Button } from "../styles/Buttons";
 import WarningIcon from "../assets/ph_warning-fill.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
 import { useContext, useEffect } from "react";
@@ -69,6 +69,7 @@ function ExperiencePage() {
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     console.log(data);
+    navigate("/education");
   };
 
   return (
@@ -270,7 +271,7 @@ function ExperiencePage() {
               უკან
             </Button>
             <Button style={{ marginBottom: "6.5rem" }} type="submit">
-              <Link to={"/education"}> შემდეგი </Link>
+              შემდეგი
             </Button>
           </div>
         </Form>
@@ -330,10 +331,7 @@ const ExperiencePageStyles = styled.div<{ error?: string }>`
   flex-direction: column;
 
   justify-content: center;
-  a {
-    text-decoration: none;
-    color: white;
-  }
+
   input {
     width: 100%;
     height: 48px;
