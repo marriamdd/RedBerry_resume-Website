@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { Context } from "../App";
 
 export default function Experience() {
-  const { experienceData, showExperienceInResume } = useContext(Context);
+  const { experienceData } = useContext(Context);
 
   return (
     <>
-      {showExperienceInResume && (
+      {
         <StyledExperience>
           <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
 
@@ -36,7 +36,7 @@ export default function Experience() {
             </div>
           ))}
         </StyledExperience>
-      )}
+      }
     </>
   );
 }

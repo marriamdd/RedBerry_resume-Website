@@ -19,6 +19,8 @@ function ExperiencePage() {
     register,
     control,
     watch,
+    reset,
+    setValue,
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -33,10 +35,15 @@ function ExperiencePage() {
       ],
     },
   });
+
+  const { fields, append } = useFieldArray<IExperience>({
+    control,
+    name: "experience",
+  });
   useEffect(() => {
     const subscription = watch((value) => {
       if (value.experience) {
-        const updatedExperienceData: IExperience = {
+        const updatedExperienceData = {
           experience: value.experience.map((item) => ({
             position: item?.position || "",
             employer: item?.employer || "",
@@ -49,8 +56,17 @@ function ExperiencePage() {
         setExperienceData(updatedExperienceData);
       }
     });
+
     return () => subscription.unsubscribe();
-  }, [watch, setExperienceData]);
+  }, [watch]);
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("resume") || "");
+    console.log(data);
+    reset({
+      experience: data.experience.map((item: IExperience) => item),
+    });
+  }, [append, setValue, fields.length]);
 
   useEffect(() => {
     const data = localStorage.getItem("resume");
@@ -61,11 +77,6 @@ function ExperiencePage() {
   }, [setExperienceData]);
 
   console.log(experienceData);
-
-  const { fields, append } = useFieldArray<IExperience>({
-    control,
-    name: "experience",
-  });
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     console.log(data);
