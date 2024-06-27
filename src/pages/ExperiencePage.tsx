@@ -8,6 +8,8 @@ import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
 import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
+import useGeorgianPattern from "../customHooks/InputGeoPattern";
+import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
 function ExperiencePage() {
   const { setExperienceData, setShowExperienceInResume } = useContext(Context);
@@ -83,28 +85,8 @@ function ExperiencePage() {
     console.log(data);
     navigate("/education");
   };
-  const handleGeorgianInput = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    const georgianPattern = /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/;
-    const allowedKeys = [
-      "Backspace",
-      "Delete",
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowUp",
-      "ArrowDown",
-      "Home",
-      "End",
-    ];
-
-    if (allowedKeys.includes(event.key) || georgianPattern.test(event.key)) {
-      return;
-    } else {
-      event.preventDefault();
-    }
-  };
-
+  const handleGeorgianInput = useGeorgianPattern();
+  const handleTextareaGeorgian = useGeorgianPatternTextarea();
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <img
@@ -180,6 +162,7 @@ function ExperiencePage() {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
+                    onKeyDown={handleGeorgianInput}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -237,6 +220,7 @@ function ExperiencePage() {
                   paddingBottom: "5rem",
                   borderBottom: "1px solid #C1C1C1",
                 }}
+                onKeyDown={handleGeorgianInput}
               >
                 <Label
                   error={errors.experience?.[index]?.description?.message}
@@ -246,6 +230,7 @@ function ExperiencePage() {
                 </Label>
                 <div style={{ position: "relative" }}>
                   <Textarea
+                    onKeyDown={handleTextareaGeorgian}
                     error={errors.experience?.[index]?.description?.message}
                     id={`experience[${index}].description`}
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
