@@ -1,30 +1,70 @@
-# React + TypeScript + Vite
+# RedBerry_resume Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Table of Contents
 
-Currently, two official plugins are available:
+- [Prerequisites](#Prerequisites)
+- [Tech Stack](#Tech-Stack)
+- [Getting Started](#Getting-Started)
+- [Project Structure](#Project-Structure)
+- [Deployment](#Deployment)
+- [Author](#Author)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- <img src="readme/npm.png" width="25" style="top: 8px" /> _npm @8 and up_
+- <img src="readme/vite.jpg" width="25" style="top: 8px" /> _vite @4.0.0_
+- <img src="readme/typescript.png" width="25" style="top: 8px" /> _typescript @4.9.3_
 
-- Configure the top-level `parserOptions` property like this:
+#
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+### Tech Stack
+
+- <img src="readme/react.png" width="25" style="top: 8px" /> _React @18.2.0 - front-end framework_
+- <img src="readme/styled-components.png" width="25" style="top: 8px" /> _Styled-components @5.3.6 - visual primitives for the component age_
+- <img src="readme/router.png" width="25" style="top: 8px" /> _React Router @6.6.1 - React library for routing_
+- <img src="readme/helmet.jpg" width="25" style="top: 8px" /> _React Helmet @6.1.0 - library for write code in head from JSX_
+
+#
+
+### Project Structure
+
+```
+|--- src
+|   |--- components # reusable components
+|   |---|--- index.ts # export all components
+|   |--- pages
+|   |---|--- index.ts # export all pages
+|   |--- styled-components # all components' styles
+|   |---|--- components # reusable components
+|   |---|--- containers # containers for pages
+|   |---|--- GlobalStyle
+|   |---|--- index.ts # export all components
+|   |--- types
+|   |---|--- types.d.ts # declare all types
+|   |--- App.tsx # main page
+|   |--- ScrollOnTop # functionality of scrolling top when rout changes
+- package.json     # dependency manager configurations
+
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+#
+
+### Deployment
+
+Before every deployment you need to create build file.
+
+```
+npm run build
+```
+
+after this you can use this file to deploy project on server.
+
+#
+
+### Author
+
+- [LinkedIn](https://www.linkedin.com/in/mariam--davitashvili/)
+- [LinkedIn](https://www.linkedin.com/in/davit-avtandilashvili-7196a82a2/)
+- [LinkedIn](https://www.linkedin.com/in/anaraliev217/)
