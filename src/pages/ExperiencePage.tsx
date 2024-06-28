@@ -8,6 +8,7 @@ import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
 import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
+import { Helmet } from "react-helmet";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
@@ -91,6 +92,9 @@ function ExperiencePage() {
     useGeorgianPatternTextarea();
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
+      <Helmet>
+        <title>Experience</title>
+      </Helmet>
       <img
         onClick={() => navigate(-1)}
         style={{
