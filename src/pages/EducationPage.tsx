@@ -4,14 +4,16 @@ import { Line } from "../styles/Line";
 import downArrow from "../assets/downArrow.svg";
 import { useEffect, useState } from "react";
 import { Button } from "../styles/Buttons";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import warning from "../assets/ph_warning-fill.svg";
+import check from "../assets/akar-icons_circle-check-fill.svg";
 
 interface FormData {
-  university: string;
-  degree: string;
-  finish_date: string;
-  description: string;
+  education: {
+    university: string;
+    finish_date: string;
+    description: string;
+  }[];
 }
 
 interface IDegreeChoices {
@@ -33,7 +35,24 @@ function EducationPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+    control,
+    watch,
+  } = useForm<FormData>({
+    defaultValues: {
+      education: [
+        {
+          university: "",
+          finish_date: "",
+          description: "",
+        },
+      ],
+    },
+  });
+
+  const { fields, append } = useFieldArray<FormData>({
+    control,
+    name: "education",
+  });
 
   console.log(errors);
   const onSubmit: SubmitHandler<FormData> = (data) => {
@@ -63,78 +82,99 @@ function EducationPage() {
         <Line />
 
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <DinamicField>
-            <SchoolDiv>
-              <School error={errors.university?.message}>
-                <p>სასწავლებელი</p>
-                <input
-                  type="text"
-                  placeholder="სასწავლებელი"
-                  {...register("university", {
-                    required: { value: true, message: "required" },
-                    minLength: {
-                      value: 2,
-                      message: "The length must be at least 2",
-                    },
-                  })}
-                />
-                <span>მინიმუმ 2 სიმბოლო</span>
-              </School>
-              {errors.university?.message && (
-                <img src={warning} alt="warning" />
-              )}
-            </SchoolDiv>
-
-            <DegreeAndGraduation>
-              <Degree>
-                <p>ხარისხი</p>
-                <Select>
-                  <SelectValue
-                    onClick={() => setIsDegreeModalOpen((modal) => !modal)}
-                    degree={degree}
+          {fields.map((field, index) => {
+            return (
+              <DinamicField key={field.id}>
+                <SchoolDiv>
+                  <School
+                    error={errors.education?.[index]?.university?.message}
                   >
-                    <h3>{degree || "აირჩიეთ ხარისხი"}</h3>
-                    <img src={downArrow} alt="down-arrow" />
-                  </SelectValue>
-
-                  {isDegreeModalOpen && (
-                    <SelectOptions onClick={() => setIsDegreeModalOpen(false)}>
-                      <h4 onClick={() => setDegree(degreeChoices.S)}>
-                        {degreeChoices.S}
-                      </h4>
-                      <h4 onClick={() => setDegree(degreeChoices.B)}>
-                        {degreeChoices.B}
-                      </h4>
-                      <h4 onClick={() => setDegree(degreeChoices.M)}>
-                        {degreeChoices.M}
-                      </h4>
-                    </SelectOptions>
+                    <p>სასწავლებელი</p>
+                    <input
+                      type="text"
+                      placeholder="სასწავლებელი"
+                      {...register(`education.${index}.university`, {
+                        required: { value: true, message: "required" },
+                        minLength: {
+                          value: 2,
+                          message: "The length must be at least 2",
+                        },
+                      })}
+                    />
+                    <span>მინიმუმ 2 სიმბოლო</span>
+                  </School>
+                  {errors.education?.[index]?.university?.message && (
+                    <ErrorImg src={warning} alt="warning" />
                   )}
-                </Select>
-              </Degree>
-              <Graduation>
-                <p>დამთავრების რიცხვი</p>
-                <input type="date" {...register("finish_date")} />
-              </Graduation>
-            </DegreeAndGraduation>
+                  {watch().education[index].university.length >= 2 && (
+                    <SucessImg src={check} />
+                  )}
+                </SchoolDiv>
 
-            <Description>
-              <p>აღწერა</p>
-              <textarea
-                placeholder="განათლების აღწერა"
-                {...register("description")}
-              ></textarea>
-            </Description>
-          </DinamicField>
+                <DegreeAndGraduation>
+                  <Degree>
+                    <p>ხარისხი</p>
+                    <Select>
+                      <SelectValue
+                        onClick={() => setIsDegreeModalOpen((modal) => !modal)}
+                        degree={degree}
+                      >
+                        <h3>{degree || "აირჩიეთ ხარისხი"}</h3>
+                        <img src={downArrow} alt="down-arrow" />
+                      </SelectValue>
+
+                      {isDegreeModalOpen && (
+                        <SelectOptions
+                          onClick={() => setIsDegreeModalOpen(false)}
+                        >
+                          <h4 onClick={() => setDegree(degreeChoices.S)}>
+                            {degreeChoices.S}
+                          </h4>
+                          <h4 onClick={() => setDegree(degreeChoices.B)}>
+                            {degreeChoices.B}
+                          </h4>
+                          <h4 onClick={() => setDegree(degreeChoices.M)}>
+                            {degreeChoices.M}
+                          </h4>
+                        </SelectOptions>
+                      )}
+                    </Select>
+                  </Degree>
+                  <Graduation>
+                    <p>დამთავრების რიცხვი</p>
+                    <input
+                      type="date"
+                      {...register(`education.${index}.finish_date`)}
+                    />
+                  </Graduation>
+                </DegreeAndGraduation>
+
+                <Description>
+                  <p>აღწერა</p>
+                  <textarea
+                    placeholder="განათლების აღწერა"
+                    {...register(`education.${index}.description`)}
+                  ></textarea>
+                </Description>
+              </DinamicField>
+            );
+          })}
 
           <AddSchool>
-            <Button padding="1.4rem 2.25rem" bg="#62A1EB">
+            <Button
+              padding="1.4rem 2.25rem"
+              bg="#62A1EB"
+              onClick={() => {
+                append({ university: "", finish_date: "", description: "" });
+              }}
+              type="button"
+            >
               სხვა სასწავლებლის დამატება
             </Button>
           </AddSchool>
 
           <FormButtons>
-            <Button>უკან</Button>
+            <Button type="button">უკან</Button>
             <Button>დასრულება</Button>
           </FormButtons>
         </Form>
@@ -210,13 +250,20 @@ const Form = styled.form``;
 const DinamicField = styled.div``;
 
 const SchoolDiv = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1.3rem;
+`;
 
-  & > img {
-    margin-right: -2.4rem;
-  }
+const ErrorImg = styled.img`
+  margin-right: -2.4rem;
+`;
+
+const SucessImg = styled.img`
+  position: absolute;
+  right: 1.4rem;
+  top: 4.3rem;
 `;
 
 const School = styled.div<{ error?: string }>`
