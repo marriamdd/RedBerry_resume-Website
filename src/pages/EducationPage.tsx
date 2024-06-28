@@ -9,6 +9,7 @@ import warning from "../assets/ph_warning-fill.svg";
 import check from "../assets/akar-icons_circle-check-fill.svg";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
+import { Helmet } from "react-helmet";
 
 interface FormData {
   education: {
@@ -81,6 +82,9 @@ function EducationPage() {
 
   return (
     <StyledEducation>
+      <Helmet>
+        <title>Education</title>
+      </Helmet>
       <img src={BackArrow} alt="back-arrow" />
       <EducationFormDiv>
         <EducationHeader>
