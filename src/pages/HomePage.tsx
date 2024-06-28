@@ -52,7 +52,7 @@ const StyledDiv2 = styled.div`
   }
   & > img {
     position: absolute;
-    
+
     right: 23%;
     top: 39%;
   }
@@ -60,11 +60,11 @@ const StyledDiv2 = styled.div`
 
 const HomePage = () => (
   <StyledDiv bgPattern={bgPattern}>
-    <img src="src/assets/MainLogo.png" alt="Main Logo" />
+    <img src="./src/assets/MainLogo.png" alt="Main Logo" />
     <hr />
     <StyledDiv2>
       <Button>ᲠᲔᲖᲘᲣᲛᲔᲡ ᲓᲐᲛᲐᲢᲔᲑᲐ</Button>
-      <img src="src/assets/homeLogo.png" alt="Home Logo" />
+      <img src="./src/assets/homeLogo.png" alt="Home Logo" />
     </StyledDiv2>
   </StyledDiv>
 );
