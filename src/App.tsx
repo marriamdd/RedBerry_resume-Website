@@ -8,21 +8,60 @@ import Layout from "./layout/Layout";
 import { GlobalStyles } from "./globalStyles/GlobalStyles";
 import { createContext, useState } from "react";
 
+export interface IExperience {
+  experience: {
+    position: string;
+    employer: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }[];
+}
+
 export interface IContext {
+  experienceData: IExperience;
+  setExperienceData: React.Dispatch<React.SetStateAction<IExperience>>;
   currentPageNumber: number;
+  showExperienceInResume: boolean;
+  setShowExperienceInResume: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const Context = createContext<IContext>({
   currentPageNumber: 1,
   setCurrentPageNumber: () => {},
+  experienceData: {
+    experience: [],
+  },
+
+  setExperienceData: () => {},
+  showExperienceInResume: false,
+  setShowExperienceInResume: () => {},
 });
 function App() {
+  const [showExperienceInResume, setShowExperienceInResume] = useState(false);
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const [experienceData, setExperienceData] = useState<IExperience>(() => {
+    const data = localStorage.getItem("resume");
+    if (data) {
+      return JSON.parse(data) as IExperience;
+    }
+    return { experience: [] };
+  });
+
   return (
     <>
       <GlobalStyles />
-      <Context.Provider value={{ currentPageNumber, setCurrentPageNumber }}>
+      <Context.Provider
+        value={{
+          currentPageNumber,
+          setCurrentPageNumber,
+          experienceData,
+          setExperienceData,
+          showExperienceInResume,
+          setShowExperienceInResume,
+        }}
+      >
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />

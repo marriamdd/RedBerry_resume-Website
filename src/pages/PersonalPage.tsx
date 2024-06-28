@@ -5,7 +5,9 @@ import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
 import warningIcon from "../assets/ph_warning-fill.svg";
 import correctIcon from "../assets/icon-check.svg";
-
+import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
+import useGeorgianPattern from "../customHooks/InputGeoPattern";
+import { useNavigate } from "react-router-dom";
 interface IFormInput {
   name: string;
   surname: string;
@@ -20,21 +22,20 @@ interface IFormInput {
 }
 
 function PersonalPage() {
-//  const [info,setInfo] = useState({
-
-//  })
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm<IFormInput>({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    // mode: "onChange",
+    // reValidateMode: "onChange",
   });
 
+  const navigate = useNavigate();
   const onSubmit = (data: IFormInput) => {
     console.log(data);
+    navigate("/experience");
   };
 
   useEffect(() => {
@@ -58,6 +59,10 @@ function PersonalPage() {
       setAvatar(cachedURL);
     }
   };
+  const { handleGeorgianInput,  } = useGeorgianPattern();
+  const { handleTextarea,  } =
+    useGeorgianPatternTextarea();
+
 
   return (
     <MainDiv>
@@ -98,6 +103,7 @@ function PersonalPage() {
                       : "input"
                   }
                   id="name"
+                  onKeyDown={handleGeorgianInput}
                   type="text"
                   {...register("name", {
                     required: "სახელის ველი სავალდებულოა",
@@ -105,10 +111,7 @@ function PersonalPage() {
                       value: 2,
                       message: "მინიმუმ 2 ასო",
                     },
-                    pattern: {
-                      value: /^[ა-ჰ]+$/,
-                      message: "მხოლოდ ქართული ასოები",
-                    },
+                    
                   })}
                 />
                 <p>მინიმუმ 2 ასო, ქართული ასო</p>
@@ -155,6 +158,7 @@ function PersonalPage() {
                     : "input"
                 }
                 id="surname"
+                onKeyDown={handleGeorgianInput}
                 type="text"
                 {...register("surname", {
                   required: "გვარის ველი სავალდებულოა",
@@ -163,7 +167,7 @@ function PersonalPage() {
                     message: "მინიმუმ 2 ასო",
                   },
                   pattern: {
-                    value: /^[ა-ჰ]+$/,
+                    value: /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/,
                     message: "მხოლოდ ქართული ასოები",
                   },
                 })}
@@ -208,6 +212,7 @@ function PersonalPage() {
             <textarea
               className="info"
               id="info"
+              onKeyDown={handleTextarea}
               placeholder="ზოგადი ინფო შენ შესახებ"
               {...register("info", {
                 required: false,
@@ -228,6 +233,7 @@ function PersonalPage() {
             <input
               className={errors.email ? "errorInput" : "input"}
               id="email"
+              // onKeyDown={handleGeorgianInput}
               type="email"
               {...register("email", {
                 required: "ელ.ფოსტა სავალდებულოა",
