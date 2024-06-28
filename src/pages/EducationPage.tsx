@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import BackArrow from "../assets/Group 4.svg";
 import { Line } from "../styles/Line";
-import downArrow from "../assets/downArrow.svg";
-import { useEffect, useState } from "react";
 import { Button } from "../styles/Buttons";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import warning from "../assets/ph_warning-fill.svg";
@@ -10,35 +8,21 @@ import check from "../assets/akar-icons_circle-check-fill.svg";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 import { Helmet } from "react-helmet";
+import Degree from "../components/Degree";
 
-interface FormData {
+export interface FormData {
   education: {
     university: string;
     finish_date: string;
+    degree: string;
     description: string;
   }[];
 }
 
-interface IDegreeChoices {
-  S: string;
-  M: string;
-  B: string;
-}
-
 function EducationPage() {
-  const [isDegreeModalOpen, setIsDegreeModalOpen] = useState(false);
-  const [degreeChoices, setDegreeChoices] = useState<IDegreeChoices>({
-    S: "",
-    B: "",
-    M: "",
-  });
-  const [degree, setDegree] = useState("");
-
   const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
   const { handleTextarea, geoErrorMessageTextarea } =
     useGeorgianPatternTextarea();
-
-  console.log(geoErrorMessage);
 
   const {
     register,
@@ -46,12 +30,14 @@ function EducationPage() {
     formState: { errors },
     control,
     watch,
+    setValue,
   } = useForm<FormData>({
     defaultValues: {
       education: [
         {
           university: "",
           finish_date: "",
+          degree: "",
           description: "",
         },
       ],
@@ -63,22 +49,9 @@ function EducationPage() {
     name: "education",
   });
 
-  console.log(errors);
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
   };
-
-  useEffect(() => {
-    async function getDegreeChoices() {
-      const res = await fetch(
-        "https://cv-colab-algouni.onrender.com/api/degree-choices/"
-      );
-      const data = await res.json();
-      console.log(data);
-      setDegreeChoices(data);
-    }
-    getDegreeChoices();
-  }, []);
 
   return (
     <StyledEducation>
@@ -135,34 +108,11 @@ function EducationPage() {
                 </SchoolDiv>
 
                 <DegreeAndGraduation>
-                  <Degree>
-                    <p>ხარისხი</p>
-                    <Select>
-                      <SelectValue
-                        onClick={() => setIsDegreeModalOpen((modal) => !modal)}
-                        degree={degree}
-                      >
-                        <h3>{degree || "აირჩიეთ ხარისხი"}</h3>
-                        <img src={downArrow} alt="down-arrow" />
-                      </SelectValue>
-
-                      {isDegreeModalOpen && (
-                        <SelectOptions
-                          onClick={() => setIsDegreeModalOpen(false)}
-                        >
-                          <h4 onClick={() => setDegree(degreeChoices.S)}>
-                            {degreeChoices.S}
-                          </h4>
-                          <h4 onClick={() => setDegree(degreeChoices.B)}>
-                            {degreeChoices.B}
-                          </h4>
-                          <h4 onClick={() => setDegree(degreeChoices.M)}>
-                            {degreeChoices.M}
-                          </h4>
-                        </SelectOptions>
-                      )}
-                    </Select>
-                  </Degree>
+                  <Degree
+                    register={register}
+                    setValue={setValue}
+                    index={index}
+                  />
                   <Graduation>
                     <p>დამთავრების რიცხვი</p>
                     <input
@@ -204,7 +154,12 @@ function EducationPage() {
               padding="1.4rem 2.25rem"
               bg="#62A1EB"
               onClick={() => {
-                append({ university: "", finish_date: "", description: "" });
+                append({
+                  university: "",
+                  finish_date: "",
+                  description: "",
+                  degree: "",
+                });
               }}
               type="button"
             >
@@ -239,7 +194,7 @@ const StyledEducation = styled.div`
     color: #000000;
   }
 
-  input {
+  & > input {
     width: 100%;
     height: 48px;
     padding: 13px 16px 14px 16px;
@@ -307,10 +262,29 @@ const SucessImg = styled.img`
 
 const School = styled.div<{ error?: string }>`
   width: 100%;
+
   & > input {
+    width: 100%;
+    height: 48px;
+    padding: 13px 16px 14px 16px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: 4px;
+    background: #fff;
+    border: 1px solid #bcbcbc;
+    outline: 1px solid #bcbcbc;
     margin-top: 0.8rem;
 
     border: ${(props) => (props.error ? "1px solid red" : "#BCBCBC")};
+
+    &::placeholder {
+      font-size: 1.6rem;
+      font-weight: 400;
+      line-height: 2.1rem;
+      color: rgba(0, 0, 0, 0.6);
+    }
   }
 
   & > span {
@@ -332,72 +306,29 @@ const DegreeAndGraduation = styled.div`
   gap: 5.6rem;
 `;
 
-const Degree = styled.div`
-  width: 100%;
-
-  & > .select {
-    width: 100%;
-    height: 48px;
-    padding: 13px 16px 14px 16px;
-    flex-shrink: 0;
-    margin-top: 0.8rem;
-  }
-`;
-
-const Select = styled.div`
-  margin-top: 0.8rem;
-  position: relative;
-`;
-
-const SelectValue = styled.div<{ degree: string }>`
-  width: 100%;
-  border: 1px solid #bcbcbc;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 4.8rem;
-  padding: 1.3rem 1.6rem 1.4rem 1.6rem;
-  border-radius: 4px 0px 0px 0px;
-  background: #ffffff;
-  cursor: pointer;
-
-  & > h3 {
-    font-size: 1.6rem;
-    font-weight: 400;
-    line-height: 2.1rem;
-    color: ${(props) => (props.degree ? "#000" : "#00000099")};
-  }
-`;
-
-const SelectOptions = styled.div`
-  position: absolute;
-  width: 100%;
-  background: #ffffff;
-
-  display: flex;
-  flex-direction: column;
-  /* gap: 2rem; */
-
-  & > h4 {
-    font-size: 1.4rem;
-    font-weight: 400;
-    line-height: 2.1rem;
-    padding: 1rem 0rem 1rem 1.6rem;
-
-    &:hover {
-      background: #4f4f4f;
-      transition: all 0.3s ease;
-      color: #fff;
-      cursor: pointer;
-    }
-  }
-`;
-
 const Graduation = styled.div`
   width: 100%;
 
   & > input {
+    width: 100%;
+    height: 48px;
+    padding: 13px 16px 14px 16px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: 4px;
+    background: #fff;
+    border: 1px solid #bcbcbc;
+    outline: 1px solid #bcbcbc;
     margin-top: 0.8rem;
+
+    &::placeholder {
+      font-size: 1.6rem;
+      font-weight: 400;
+      line-height: 2.1rem;
+      color: rgba(0, 0, 0, 0.6);
+    }
   }
 `;
 
