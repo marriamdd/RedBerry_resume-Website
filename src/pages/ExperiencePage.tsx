@@ -11,6 +11,7 @@ import { Context, IExperience } from "../App";
 import { Helmet } from "react-helmet";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
+import { DatePicker } from "antd";
 
 function ExperiencePage() {
   const { setExperienceData, setShowExperienceInResume } = useContext(Context);
@@ -90,6 +91,7 @@ function ExperiencePage() {
   const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
   const { handleTextarea, geoErrorMessageTextarea } =
     useGeorgianPatternTextarea();
+
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <Helmet>
@@ -107,6 +109,7 @@ function ExperiencePage() {
       />
 
       <ExperiencePageStyles>
+        <DatePicker />
         <div className="headerOfExperience">
           <h1>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h1>
           <span>2/3</span>
@@ -217,12 +220,14 @@ function ExperiencePage() {
                   >
                     დაწყების რიცხვი
                   </Label>
+
                   <input
                     id={`experience[${index}].startDate`}
                     type="date"
                     {...register(`experience.${index}.startDate`, {
                       required: { value: true, message: "required" },
                     })}
+                    name="daterange"
                   />
                 </div>
                 <div>

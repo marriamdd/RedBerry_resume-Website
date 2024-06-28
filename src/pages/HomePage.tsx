@@ -27,8 +27,6 @@ const StyledDiv = styled.div<StyledDivProps>`
     width: 24.6rem;
     height: 3.8rem;
   }
-
-
 `;
 
 const StyledDiv2 = styled.div`
@@ -62,6 +60,7 @@ const HomePage = () => (
   <StyledDiv bgPattern={bgPattern}>
     <img src="./src/assets/MainLogo.png" alt="Main Logo" />
     <hr />
+
     <StyledDiv2>
       <Button>ᲠᲔᲖᲘᲣᲛᲔᲡ ᲓᲐᲛᲐᲢᲔᲑᲐ</Button>
       <img src="./src/assets/homeLogo.png" alt="Home Logo" />
