@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState, useRef } from "react";
 import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
+import warningIcon from "../assets/ph_warning-fill.svg";
 
 interface IFormInput {
   name: string;
@@ -18,6 +19,7 @@ interface IFormInput {
 }
 
 function PersonalPage() {
+  const [correct, setCorrect] = useState(false);
   const {
     register,
     handleSubmit,
@@ -85,9 +87,16 @@ function PersonalPage() {
                 სახელი
               </Label>
               <input
-                className="input"
+                className={
+                  correct && !errors.name
+                    ? "corrected"
+                    : errors.name
+                    ? "errorInput"
+                    : "input"
+                }
                 id="name"
                 type="text"
+                onClick={() => setCorrect(!correct)}
                 {...register("name", {
                   required: "სახელის ველი სავალდებულოა",
                   minLength: {
@@ -103,6 +112,13 @@ function PersonalPage() {
               <p>მინიმუმ 2 ასო, ქართული ასო</p>
             </TextInput>
 
+              <img
+                src={errors.name ? warningIcon : correct && !errors.name ? correctIcon : ""}
+                alt="warningIcon"
+                style={{ width: "2.4rem", height: "2.4rem", marginTop: "5rem" }}
+              />
+
+
             <TextInput>
               <Label
                 className={errors.surname ? "errorLabel" : "label"}
@@ -111,7 +127,7 @@ function PersonalPage() {
                 გვარი
               </Label>
               <input
-                className="input"
+                className={errors.surname ? "errorInput" : "input"}
                 id="surname"
                 type="text"
                 {...register("surname", {
@@ -128,6 +144,13 @@ function PersonalPage() {
               />
               <p>მინიმუმ 2 ასო, ქართული ასო</p>
             </TextInput>
+            {errors.surname && (
+              <img
+                src={warningIcon}
+                alt="warningIcon"
+                style={{ width: "2.4rem", height: "2.4rem", marginTop: "5rem" }}
+              />
+            )}
           </div>
           <div
             style={{
@@ -162,7 +185,6 @@ function PersonalPage() {
               placeholder="ზოგადი ინფო შენ შესახებ"
               {...register("info", {
                 required: false,
-
                 pattern: {
                   value: /^[ა-ჰ]+$/,
                   message: "მხოლოდ ქართული ასოები",
@@ -170,10 +192,15 @@ function PersonalPage() {
               })}
             ></textarea>
           </div>
-          <TextInput style={{ marginTop: "2.5rem" }}>
-            <Label htmlFor="email" className={errors.email ? "errorLabel" : "label"}>ელ.ფოსტა </Label>
+          <TextInput style={{ marginTop: "2.5rem", position: "relative" }}>
+            <Label
+              htmlFor="email"
+              className={errors.email ? "errorLabel" : "label"}
+            >
+              ელ.ფოსტა{" "}
+            </Label>
             <input
-              className="input"
+              className={errors.email ? "errorInput" : "input"}
               id="email"
               type="email"
               {...register("email", {
@@ -185,11 +212,30 @@ function PersonalPage() {
               })}
             />
             <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
+
+            {errors.email && (
+              <img
+                src={warningIcon}
+                alt="warningIcon"
+                style={{
+                  width: "2.4rem",
+                  height: "2.4rem",
+                  position: "absolute",
+                  right: "-6%",
+                  top: "44%",
+                }}
+              />
+            )}
           </TextInput>
           <TextInput style={{ marginTop: "2.5rem" }}>
-            <Label htmlFor="phone" className={errors.phone ? "errorLabel" : "label"}>მობილურის ნომერი</Label>
+            <Label
+              htmlFor="phone"
+              className={errors.phone ? "errorLabel" : "label"}
+            >
+              მობილურის ნომერი
+            </Label>
             <input
-              className="input"
+              className={errors.phone ? "errorInput" : "input"}
               id="phone"
               type="text"
               {...register("phone", {
@@ -227,7 +273,32 @@ const MainDiv = styled.div`
     font-weight: 500;
     line-height: 2.1rem;
   }
-
+  .errorInput {
+    display: flex;
+    height: 4.8rem;
+    padding: 1.3rem 8.3rem 1.4rem 1.6rem;
+    align-items: center;
+    align-self: stretch;
+    border-radius: 0.4rem;
+    border: 1px solid #ef5050;
+    background: #fff;
+    &:focus {
+      outline: none;
+    }
+  }
+  .corrected {
+    display: flex;
+    height: 4.8rem;
+    padding: 1.3rem 8.3rem 1.4rem 1.6rem;
+    align-items: center;
+    align-self: stretch;
+    border-radius: 0.4rem;
+    border: 1px solid #98e37e;
+    background: #fff;
+    &:focus {
+      outline: none;
+    }
+  }
   .fieldsDiv {
     margin-top: 7rem;
     width: 100%;
@@ -278,6 +349,9 @@ const MainDiv = styled.div`
     border-radius: 0.4rem;
     border: 1px solid #bcbcbc;
     background: #fff;
+    &:focus {
+      outline: none;
+    }
   }
 
   .info::placeholder {
