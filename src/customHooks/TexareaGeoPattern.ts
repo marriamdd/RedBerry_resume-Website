@@ -16,7 +16,8 @@ const useGeorgianPatternTextarea = () => {
       "ArrowDown",
       "Home",
       "End",
-      "",
+      " ",
+      "Shift",
     ];
     const currentId = event.currentTarget.id;
     if (allowedKeys.includes(event.key) || georgianPattern.test(event.key)) {
