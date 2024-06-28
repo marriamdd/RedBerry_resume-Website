@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
 import warningIcon from "../assets/ph_warning-fill.svg";
+import correctIcon from "../assets/icon-check.svg";
 
 interface IFormInput {
   name: string;
@@ -19,17 +20,20 @@ interface IFormInput {
 }
 
 function PersonalPage() {
-  const [correct, setCorrect] = useState(false);
+  const [correct, setCorrect] = useState({
+    name: false,
+    surname: false,
+    email: false,
+    phone: false,
+  });
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm<IFormInput>({
-    defaultValues: {
-      email: "",
-    },
     mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const onSubmit = (data: IFormInput) => {
@@ -88,7 +92,7 @@ function PersonalPage() {
               </Label>
               <input
                 className={
-                  correct && !errors.name
+                  correct.name
                     ? "corrected"
                     : errors.name
                     ? "errorInput"
@@ -96,7 +100,6 @@ function PersonalPage() {
                 }
                 id="name"
                 type="text"
-                onClick={() => setCorrect(!correct)}
                 {...register("name", {
                   required: "სახელის ველი სავალდებულოა",
                   minLength: {
@@ -111,13 +114,13 @@ function PersonalPage() {
               />
               <p>მინიმუმ 2 ასო, ქართული ასო</p>
             </TextInput>
-
+            {errors.name && (
               <img
-                src={errors.name ? warningIcon : correct && !errors.name ? correctIcon : ""}
-                alt="warningIcon"
+                src={warningIcon}
+                alt={"warningIcon"}
                 style={{ width: "2.4rem", height: "2.4rem", marginTop: "5rem" }}
               />
-
+            )}
 
             <TextInput>
               <Label
@@ -127,7 +130,13 @@ function PersonalPage() {
                 გვარი
               </Label>
               <input
-                className={errors.surname ? "errorInput" : "input"}
+                className={
+                  correct.surname
+                    ? "corrected"
+                    : errors.surname
+                    ? "errorInput"
+                    : "input"
+                }
                 id="surname"
                 type="text"
                 {...register("surname", {
@@ -147,7 +156,7 @@ function PersonalPage() {
             {errors.surname && (
               <img
                 src={warningIcon}
-                alt="warningIcon"
+                alt={"warningIcon"}
                 style={{ width: "2.4rem", height: "2.4rem", marginTop: "5rem" }}
               />
             )}
@@ -213,7 +222,7 @@ function PersonalPage() {
             />
             <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
 
-            {errors.email && (
+            {errors.email ? (
               <img
                 src={warningIcon}
                 alt="warningIcon"
@@ -225,9 +234,9 @@ function PersonalPage() {
                   top: "44%",
                 }}
               />
-            )}
+            ) : null}
           </TextInput>
-          <TextInput style={{ marginTop: "2.5rem" }}>
+          <TextInput style={{ marginTop: "2.5rem", position: "relative" }}>
             <Label
               htmlFor="phone"
               className={errors.phone ? "errorLabel" : "label"}
@@ -248,6 +257,19 @@ function PersonalPage() {
               })}
             />
             <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
+            {errors.phone && (
+              <img
+                src={warningIcon}
+                alt="warningIcon"
+                style={{
+                  width: "2.4rem",
+                  height: "2.4rem",
+                  position: "absolute",
+                  right: "-6%",
+                  top: "44%",
+                }}
+              />
+            )}
           </TextInput>
           <div
             style={{
@@ -263,9 +285,11 @@ function PersonalPage() {
     </MainDiv>
   );
 }
+
 const MainDiv = styled.div`
   align-items: center;
   padding: 2rem;
+
 
   .errorLabel {
     color: #e52f2f;
@@ -273,6 +297,7 @@ const MainDiv = styled.div`
     font-weight: 500;
     line-height: 2.1rem;
   }
+
   .errorInput {
     display: flex;
     height: 4.8rem;
@@ -286,6 +311,7 @@ const MainDiv = styled.div`
       outline: none;
     }
   }
+
   .corrected {
     display: flex;
     height: 4.8rem;
@@ -299,6 +325,7 @@ const MainDiv = styled.div`
       outline: none;
     }
   }
+
   .fieldsDiv {
     margin-top: 7rem;
     width: 100%;
@@ -338,6 +365,7 @@ const MainDiv = styled.div`
     resize: none;
     min-height: 10rem;
   }
+
   .input {
     display: flex;
     height: 4.8rem;
