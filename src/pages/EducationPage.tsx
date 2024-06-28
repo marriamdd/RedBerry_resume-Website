@@ -7,6 +7,8 @@ import { Button } from "../styles/Buttons";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import warning from "../assets/ph_warning-fill.svg";
 import check from "../assets/akar-icons_circle-check-fill.svg";
+import useGeorgianPattern from "../customHooks/InputGeoPattern";
+import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
 interface FormData {
   education: {
@@ -30,6 +32,12 @@ function EducationPage() {
     M: "",
   });
   const [degree, setDegree] = useState("");
+
+  const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
+  const { handleTextarea, geoErrorMessageTextarea } =
+    useGeorgianPatternTextarea();
+
+  console.log(geoErrorMessage);
 
   const {
     register,
@@ -93,6 +101,8 @@ function EducationPage() {
                     <input
                       type="text"
                       placeholder="სასწავლებელი"
+                      id={`education[${index}].university`}
+                      onKeyDown={(e) => handleGeorgianInput(e)}
                       {...register(`education.${index}.university`, {
                         required: { value: true, message: "required" },
                         minLength: {
@@ -101,7 +111,16 @@ function EducationPage() {
                         },
                       })}
                     />
-                    <span>მინიმუმ 2 სიმბოლო</span>
+                    <span>
+                      მინიმუმ 2 &nbsp;
+                      {geoErrorMessage[`education[${index}].university`] && (
+                        <span style={{ color: "red" }}>
+                          {geoErrorMessage[`education[${index}].university`]}
+                          &nbsp;
+                        </span>
+                      )}
+                      სიმბოლო
+                    </span>
                   </School>
                   {errors.education?.[index]?.university?.message && (
                     <ErrorImg src={warning} alt="warning" />
@@ -144,6 +163,7 @@ function EducationPage() {
                     <p>დამთავრების რიცხვი</p>
                     <input
                       type="date"
+                      onKeyDown={handleGeorgianInput}
                       {...register(`education.${index}.finish_date`)}
                     />
                   </Graduation>
@@ -152,9 +172,24 @@ function EducationPage() {
                 <Description>
                   <p>აღწერა</p>
                   <textarea
+                    onKeyDown={handleTextarea}
                     placeholder="განათლების აღწერა"
+                    id={`education[${index}].description`}
                     {...register(`education.${index}.description`)}
                   ></textarea>
+
+                  {geoErrorMessageTextarea[
+                    `education[${index}].description`
+                  ] && (
+                    <p style={{ color: "red" }}>
+                      {
+                        geoErrorMessageTextarea[
+                          `education[${index}].description`
+                        ]
+                      }
+                      &nbsp;
+                    </p>
+                  )}
                 </Description>
               </DinamicField>
             );

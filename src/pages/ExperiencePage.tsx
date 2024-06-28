@@ -8,6 +8,7 @@ import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
 import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
+import { Helmet } from "react-helmet";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
@@ -15,13 +16,13 @@ function ExperiencePage() {
   const { setExperienceData, setShowExperienceInResume } = useContext(Context);
   const navigate = useNavigate();
   setShowExperienceInResume(true);
+
   const {
     handleSubmit,
     register,
     control,
     watch,
     reset,
-
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -41,6 +42,7 @@ function ExperiencePage() {
     control,
     name: "experience",
   });
+
   useEffect(() => {
     const subscription = watch((value) => {
       if (value.experience) {
@@ -88,9 +90,11 @@ function ExperiencePage() {
   const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
   const { handleTextarea, geoErrorMessageTextarea } =
     useGeorgianPatternTextarea();
-  console.log(geoErrorMessage);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
+      <Helmet>
+        <title>Experience</title>
+      </Helmet>
       <img
         onClick={() => navigate(-1)}
         style={{
@@ -223,10 +227,11 @@ function ExperiencePage() {
                 </div>
                 <div>
                   <Label
+                    style={{ textWrap: "nowrap" }}
                     error={errors.experience?.[index]?.endDate?.message}
                     htmlFor={`experience[${index}].endDate`}
                   >
-                    დაწყების რიცხვი
+                    დამთავრების რიცხვი
                   </Label>
                   <input
                     id={`experience[${index}].endDate`}
