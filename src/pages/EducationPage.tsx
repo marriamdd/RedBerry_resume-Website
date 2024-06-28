@@ -2,9 +2,10 @@ import styled from "styled-components";
 import BackArrow from "../assets/Group 4.svg";
 import { Line } from "../styles/Line";
 import downArrow from "../assets/downArrow.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../styles/Buttons";
 import { SubmitHandler, useForm } from "react-hook-form";
+import warning from "../assets/ph_warning-fill.svg";
 
 interface FormData {
   university: string;
@@ -13,8 +14,20 @@ interface FormData {
   description: string;
 }
 
+interface IDegreeChoices {
+  S: string;
+  M: string;
+  B: string;
+}
+
 function EducationPage() {
   const [isDegreeModalOpen, setIsDegreeModalOpen] = useState(false);
+  const [degreeChoices, setDegreeChoices] = useState<IDegreeChoices>({
+    S: "",
+    B: "",
+    M: "",
+  });
+  const [degree, setDegree] = useState("");
 
   const {
     register,
@@ -26,6 +39,18 @@ function EducationPage() {
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
   };
+
+  useEffect(() => {
+    async function getDegreeChoices() {
+      const res = await fetch(
+        "https://cv-colab-algouni.onrender.com/api/degree-choices/"
+      );
+      const data = await res.json();
+      console.log(data);
+      setDegreeChoices(data);
+    }
+    getDegreeChoices();
+  }, []);
 
   return (
     <StyledEducation>
@@ -39,17 +64,26 @@ function EducationPage() {
 
         <Form onSubmit={handleSubmit(onSubmit)}>
           <DinamicField>
-            <School error={errors.university?.message}>
-              <p>სასწავლებელი</p>
-              <input
-                type="text"
-                placeholder="სასწავლებელი"
-                {...register("university", {
-                  required: { value: true, message: "required" },
-                })}
-              />
-              <span>მინიმუმ 2 სიმბოლო</span>
-            </School>
+            <SchoolDiv>
+              <School error={errors.university?.message}>
+                <p>სასწავლებელი</p>
+                <input
+                  type="text"
+                  placeholder="სასწავლებელი"
+                  {...register("university", {
+                    required: { value: true, message: "required" },
+                    minLength: {
+                      value: 2,
+                      message: "The length must be at least 2",
+                    },
+                  })}
+                />
+                <span>მინიმუმ 2 სიმბოლო</span>
+              </School>
+              {errors.university?.message && (
+                <img src={warning} alt="warning" />
+              )}
+            </SchoolDiv>
 
             <DegreeAndGraduation>
               <Degree>
@@ -57,19 +91,23 @@ function EducationPage() {
                 <Select>
                   <SelectValue
                     onClick={() => setIsDegreeModalOpen((modal) => !modal)}
+                    degree={degree}
                   >
-                    <h3>აირჩიეთ ხარისხი</h3>
+                    <h3>{degree || "აირჩიეთ ხარისხი"}</h3>
                     <img src={downArrow} alt="down-arrow" />
                   </SelectValue>
 
                   {isDegreeModalOpen && (
-                    <SelectOptions>
-                      <h4>საშუალო სკოლის დიპლომი</h4>
-                      <h4>ზოგადსაგანმანათლებლო დიპლომი</h4>
-                      <h4>ragaca</h4>
-                      <h4>ragaca</h4>
-                      <h4>ragaca</h4>
-                      <h4>ragaca</h4>
+                    <SelectOptions onClick={() => setIsDegreeModalOpen(false)}>
+                      <h4 onClick={() => setDegree(degreeChoices.S)}>
+                        {degreeChoices.S}
+                      </h4>
+                      <h4 onClick={() => setDegree(degreeChoices.B)}>
+                        {degreeChoices.B}
+                      </h4>
+                      <h4 onClick={() => setDegree(degreeChoices.M)}>
+                        {degreeChoices.M}
+                      </h4>
                     </SelectOptions>
                   )}
                 </Select>
@@ -132,6 +170,8 @@ const StyledEducation = styled.div`
     align-self: stretch;
     border-radius: 4px;
     background: #fff;
+    border: 1px solid #bcbcbc;
+    outline: 1px solid #bcbcbc;
 
     &::placeholder {
       font-size: 1.6rem;
@@ -169,11 +209,22 @@ const Form = styled.form``;
 
 const DinamicField = styled.div``;
 
+const SchoolDiv = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+
+  & > img {
+    margin-right: -2.4rem;
+  }
+`;
+
 const School = styled.div<{ error?: string }>`
+  width: 100%;
   & > input {
     margin-top: 0.8rem;
-    outline: none;
-    border: ${(props) => (props.error ? "1px solid red" : "none")};
+
+    border: ${(props) => (props.error ? "1px solid red" : "#BCBCBC")};
   }
 
   & > span {
@@ -181,6 +232,10 @@ const School = styled.div<{ error?: string }>`
     font-weight: 300;
     line-height: 2.1rem;
     margin-top: 0.8rem;
+  }
+
+  & > p {
+    color: ${(props) => (props.error ? "#E52F2F" : "#000000")};
   }
 `;
 
@@ -208,7 +263,7 @@ const Select = styled.div`
   position: relative;
 `;
 
-const SelectValue = styled.div`
+const SelectValue = styled.div<{ degree: string }>`
   width: 100%;
   border: 1px solid #bcbcbc;
   display: flex;
@@ -224,7 +279,7 @@ const SelectValue = styled.div`
     font-size: 1.6rem;
     font-weight: 400;
     line-height: 2.1rem;
-    color: #00000099;
+    color: ${(props) => (props.degree ? "#000" : "#00000099")};
   }
 `;
 
