@@ -20,12 +20,9 @@ interface IFormInput {
 }
 
 function PersonalPage() {
-  const [correct, setCorrect] = useState({
-    name: false,
-    surname: false,
-    email: false,
-    phone: false,
-  });
+//  const [info,setInfo] = useState({
+
+//  })
   const {
     register,
     handleSubmit,
@@ -83,45 +80,65 @@ function PersonalPage() {
         <HeaderHr />
         <form className="fieldsDiv" onSubmit={handleSubmit(onSubmit)}>
           <div style={{ display: "flex", gap: "2.4rem" }}>
-            <TextInput>
-              <Label
-                className={errors.name ? "errorLabel" : "label"}
-                htmlFor="name"
-              >
-                სახელი
-              </Label>
-              <input
-                className={
-                  correct.name
-                    ? "corrected"
-                    : errors.name
-                    ? "errorInput"
-                    : "input"
-                }
-                id="name"
-                type="text"
-                {...register("name", {
-                  required: "სახელის ველი სავალდებულოა",
-                  minLength: {
-                    value: 2,
-                    message: "მინიმუმ 2 ასო",
-                  },
-                  pattern: {
-                    value: /^[ა-ჰ]+$/,
-                    message: "მხოლოდ ქართული ასოები",
-                  },
-                })}
-              />
-              <p>მინიმუმ 2 ასო, ქართული ასო</p>
-            </TextInput>
+            <div style={{ position: "relative", width: "100%" }}>
+              <TextInput>
+                <Label
+                  className={errors.name ? "errorLabel" : "label"}
+                  htmlFor="name"
+                >
+                  სახელი
+                </Label>
+
+                <input
+                  className={
+                    watch().name
+                      ? "corrected"
+                      : errors.name
+                      ? "errorInput"
+                      : "input"
+                  }
+                  id="name"
+                  type="text"
+                  {...register("name", {
+                    required: "სახელის ველი სავალდებულოა",
+                    minLength: {
+                      value: 2,
+                      message: "მინიმუმ 2 ასო",
+                    },
+                    pattern: {
+                      value: /^[ა-ჰ]+$/,
+                      message: "მხოლოდ ქართული ასოები",
+                    },
+                  })}
+                />
+                <p>მინიმუმ 2 ასო, ქართული ასო</p>
+              </TextInput>
+
+              {watch().name?.length >= 2 && (
+                <img
+                  style={{
+                    position: "absolute",
+                    bottom: "4.5rem",
+                    right: "1.5rem",
+                    width: "2.4rem",
+                    height: "2.4rem",
+                  }}
+                  src={correctIcon}
+                  alt="ValidateIcon"
+                />
+              )}
+            </div>
             {errors.name && (
               <img
                 src={warningIcon}
                 alt={"warningIcon"}
-                style={{ width: "2.4rem", height: "2.4rem", marginTop: "5rem" }}
+                style={{
+                  width: "2.4rem",
+                  height: "2.4rem",
+                  marginTop: "5rem",
+                }}
               />
             )}
-
             <TextInput>
               <Label
                 className={errors.surname ? "errorLabel" : "label"}
@@ -131,7 +148,7 @@ function PersonalPage() {
               </Label>
               <input
                 className={
-                  correct.surname
+                  watch().surname
                     ? "corrected"
                     : errors.surname
                     ? "errorInput"
@@ -289,7 +306,6 @@ function PersonalPage() {
 const MainDiv = styled.div`
   align-items: center;
   padding: 2rem;
-
 
   .errorLabel {
     color: #e52f2f;
