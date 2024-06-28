@@ -4,7 +4,6 @@
 
 - [Prerequisites](#Prerequisites)
 - [Tech Stack](#Tech-Stack)
-- [Getting Started](#Getting-Started)
 - [Project Structure](#Project-Structure)
 - [Deployment](#Deployment)
 - [Author](#Author)
