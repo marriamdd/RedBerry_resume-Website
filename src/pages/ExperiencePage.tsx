@@ -9,9 +9,6 @@ import { Label, TextInput } from "../styles/FormStyles";
 import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
 import { Helmet } from "react-helmet";
-import useGeorgianPattern from "../customHooks/InputGeoPattern";
-import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
-import { DatePicker } from "antd";
 
 function ExperiencePage() {
   const { setExperienceData, setShowExperienceInResume } = useContext(Context);
@@ -24,6 +21,7 @@ function ExperiencePage() {
     control,
     watch,
     reset,
+
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -88,9 +86,6 @@ function ExperiencePage() {
     console.log(data);
     navigate("/education");
   };
-  const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
-  const { handleTextarea, geoErrorMessageTextarea } =
-    useGeorgianPatternTextarea();
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
@@ -109,7 +104,6 @@ function ExperiencePage() {
       />
 
       <ExperiencePageStyles>
-        <DatePicker />
         <div className="headerOfExperience">
           <h1>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h1>
           <span>2/3</span>
@@ -138,7 +132,6 @@ function ExperiencePage() {
                         message: "Only Georgian characters allowed",
                       },
                     })}
-                    onKeyDown={handleGeorgianInput}
                   />
 
                   {errors.experience?.[index]?.position && (
@@ -158,15 +151,7 @@ function ExperiencePage() {
                   )}
                 </div>
 
-                <p>
-                  მინიმუმ 2{" "}
-                  {geoErrorMessage[`experience[${index}].position`] && (
-                    <span style={{ color: "red" }}>
-                      {geoErrorMessage[`experience[${index}].position`]}&nbsp;
-                    </span>
-                  )}
-                  სიმბოლო
-                </p>
+                <p>მინიმუმ 2 სიმბოლო</p>
               </TextInput>
               <TextInput error={errors.experience?.[index]?.employer?.message}>
                 <Label
@@ -184,7 +169,6 @@ function ExperiencePage() {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    onKeyDown={(event) => handleGeorgianInput(event)}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -202,15 +186,7 @@ function ExperiencePage() {
                   )}
                 </div>
 
-                <p>
-                  მინიმუმ 2{" "}
-                  {geoErrorMessage[`experience[${index}].employer`] && (
-                    <span style={{ color: "red" }}>
-                      {geoErrorMessage[`experience[${index}].employer`]} &nbsp;
-                    </span>
-                  )}
-                  სიმბოლო
-                </p>
+                <p>მინიმუმ 2 სიმბოლო</p>
               </TextInput>
               <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
@@ -227,7 +203,6 @@ function ExperiencePage() {
                     {...register(`experience.${index}.startDate`, {
                       required: { value: true, message: "required" },
                     })}
-                    name="daterange"
                   />
                 </div>
                 <div>
@@ -253,7 +228,6 @@ function ExperiencePage() {
                   paddingBottom: "5rem",
                   borderBottom: "1px solid #C1C1C1",
                 }}
-                onKeyDown={handleGeorgianInput}
               >
                 <Label
                   error={errors.experience?.[index]?.description?.message}
@@ -263,7 +237,6 @@ function ExperiencePage() {
                 </Label>
                 <div style={{ position: "relative" }}>
                   <Textarea
-                    onKeyDown={(e) => handleTextarea(e)}
                     error={errors.experience?.[index]?.description?.message}
                     id={`experience[${index}].description`}
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
@@ -288,18 +261,6 @@ function ExperiencePage() {
                     />
                   )}
                 </div>
-                {geoErrorMessageTextarea[
-                  `experience[${index}].description`
-                ] && (
-                  <p style={{ color: "red" }}>
-                    {
-                      geoErrorMessageTextarea[
-                        `experience[${index}].description`
-                      ]
-                    }
-                    &nbsp;
-                  </p>
-                )}
               </TextInput>
             </div>
           ))}
