@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Controller, useForm } from "react-hook-form";
-import { useEffect, useState, useRef, ChangeEvent } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
 import warningIcon from "../assets/ph_warning-fill.svg";
@@ -12,6 +12,7 @@ import { Helmet } from "react-helmet";
 import { IFormInput } from "../App";
 import { useContext } from "react";
 import { Context } from "../App";
+import InputMask from "react-input-mask";
 
 function PersonalPage() {
   const { setPersonalData } = useContext(Context);
@@ -34,7 +35,6 @@ function PersonalPage() {
   };
 
   const [avatar, setAvatar] = useState<string | null>(null);
- 
 
   const fileUploadRef = useRef<HTMLInputElement | null>(null);
 
@@ -71,11 +71,11 @@ function PersonalPage() {
 
   const phoneValue = watch("phone");
 
-  const handlePhoneInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const sanitizedValue = value.replace(/[^\d+]/g, "");
-    e.target.value = sanitizedValue;
-  };
+  // const handlePhoneInput = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   const sanitizedValue = value.replace(/[^\d+]/g, "");
+  //   e.target.value = sanitizedValue;
+  // };
 
   useEffect(() => {
     const storedData = localStorage.getItem("resume");
@@ -187,7 +187,7 @@ function PersonalPage() {
                     },
                   })}
                 />
-                <p>მინიმუმ 2 ასო, ქართული ასო</p>
+                <p style={{ textWrap: "nowrap" }}>მინიმუმ 2 ასო, ქართული ასო</p>
               </TextInput>
 
               {watch().name?.length >= 2 && (
@@ -246,7 +246,7 @@ function PersonalPage() {
                     },
                   })}
                 />
-                <p>მინიმუმ 2 ასო, ქართული ასო</p>
+                <p style={{ textWrap: "nowrap" }}>მინიმუმ 2 ასო, ქართული ასო</p>
               </TextInput>
               {watch().surname?.length >= 2 && (
                 <img
@@ -391,46 +391,41 @@ function PersonalPage() {
               >
                 მობილურის ნომერი
               </Label>
-              <input
-                className={
-                  phoneValue &&
-                  phoneValue.includes("+995") &&
-                  phoneValue.length === 13
-                    ? "corrected"
-                    : errors.phone
-                    ? "errorInput"
-                    : "input"
-                }
-                id="phone"
-                type="tel"
-                placeholder="+995XXXXXXXXX"
-                {...register("phone", {
+              <Controller
+                name="phone"
+                control={control}
+                defaultValue=""
+                rules={{
                   required: "მობილურის ნომერი სავალდებულოა",
                   pattern: {
-                    value: /^\+995\d{9}$/,
-                    message:
-                      "უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს",
+                    value: /^\+995 \d{3} \d{2} \d{2} \d{2}$/,
+                    message: "უნდა აკმაყოფილებდეს +995 XXX XX XX XX ფორმატს",
                   },
-                })}
-                onInput={handlePhoneInput}
-                onKeyDown={(e) => {
-                  if (
-                    !/[0-9+]/.test(e.key) &&
-                    ![
-                      "Backspace",
-                      "ArrowLeft",
-                      "ArrowRight",
-                      "Delete",
-                    ].includes(e.key)
-                  ) {
-                    e.preventDefault();
-                  }
                 }}
+                render={({ field }) => (
+                  <InputMask
+                    mask="+999 999 99 99 99"
+                    maskChar=" "
+                    {...field}
+                    placeholder="+995 XXX XX XX XX"
+                    id="phoneNumber"
+                    type="text"
+                    className={
+                      phoneValue &&
+                      phoneValue.includes("+995") &&
+                      phoneValue.trim().length === 17
+                        ? "corrected"
+                        : errors.phone
+                        ? "errorInput"
+                        : "input"
+                    }
+                  />
+                )}
               />
               <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
               {phoneValue &&
                 phoneValue.includes("+995") &&
-                phoneValue.length === 13 && (
+                phoneValue.trim().length === 17 && (
                   <img
                     style={{
                       position: "absolute",
