@@ -11,9 +11,12 @@ import { Context, IExperience } from "../App";
 import { Helmet } from "react-helmet";
 
 function ExperiencePage() {
-  const { setExperienceData, setShowExperienceInResume } = useContext(Context);
+  const {
+    setExperienceData,
+    //  setShowExperienceInResume
+  } = useContext(Context);
   const navigate = useNavigate();
-  setShowExperienceInResume(true);
+  // setShowExperienceInResume(true);
 
   const {
     handleSubmit,
