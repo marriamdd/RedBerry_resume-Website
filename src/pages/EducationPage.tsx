@@ -8,6 +8,8 @@ import Degree from "../components/Degree";
 import School from "../components/School";
 import Graduation from "../components/Graduation";
 import Description from "../components/Description";
+import { useContext, useEffect } from "react";
+import { Context } from "../App";
 
 export interface FormData {
   education: {
@@ -26,6 +28,7 @@ function EducationPage() {
     control,
     watch,
     setValue,
+    reset,
   } = useForm<FormData>({
     defaultValues: {
       education: [
@@ -39,6 +42,8 @@ function EducationPage() {
     },
   });
 
+  const { setEducationData } = useContext(Context);
+
   const { fields, append } = useFieldArray<FormData>({
     control,
     name: "education",
@@ -47,6 +52,48 @@ function EducationPage() {
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
   };
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.education) {
+        const storedData = localStorage.getItem("resume");
+        const existingResumeData = storedData ? JSON.parse(storedData) : {};
+        const updateEducationData = {
+          ...existingResumeData,
+          education: value.education.map((item) => ({
+            university: item?.university || "",
+            finish_date: item?.finish_date || "",
+            degree: item?.degree || "",
+            description: item?.description || "",
+          })),
+        };
+        localStorage.setItem("resume", JSON.stringify(updateEducationData));
+        setEducationData(updateEducationData);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setEducationData]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("resume");
+    if (data) {
+      const json = JSON.parse(data);
+      setEducationData(json);
+    }
+  }, [setEducationData]);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("resume");
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      if (data && data.education) {
+        reset({
+          education: data.education.map((item: FormData) => item),
+        });
+      }
+    }
+  }, [append, reset, fields.length]);
 
   return (
     <StyledEducation>
@@ -142,10 +189,6 @@ const StyledEducation = styled.div`
 
 const EducationFormDiv = styled.div`
   width: 100%;
-
-  & > div {
-    margin-bottom: 0;
-  }
 `;
 
 const EducationHeader = styled.div`
