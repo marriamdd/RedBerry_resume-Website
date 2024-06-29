@@ -6,14 +6,19 @@ import WarningIcon from "../assets/ph_warning-fill.svg";
 import { useNavigate } from "react-router-dom";
 import Validate from "../assets/akar-icons_circle-check-fill.svg";
 import { Label, TextInput } from "../styles/FormStyles";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context, IExperience } from "../App";
 import { Helmet } from "react-helmet";
 
+export interface Irequired {
+  [index: number]: boolean;
+}
 function ExperiencePage() {
   const { setExperienceData } = useContext(Context);
   const navigate = useNavigate();
   // setShowExperienceInResume(true);
+
+  const [required, setRequired] = useState<Irequired>({});
 
   const {
     handleSubmit,
@@ -41,28 +46,28 @@ function ExperiencePage() {
     control,
     name: "experience",
   });
-useEffect(() => {
-  const subscription = watch((value) => {
-    if (value.experience) {
-      const storedData = localStorage.getItem("resume");
-      const existingResumeData = storedData ? JSON.parse(storedData) : {};
-      const updatedExperienceData = {
-        ...existingResumeData,
-        experience: value.experience.map((item) => ({
-          position: item?.position || "",
-          employer: item?.employer || "",
-          startDate: item?.startDate || "",
-          endDate: item?.endDate || "",
-          description: item?.description || "",
-        })),
-      };
-      localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
-      setExperienceData(updatedExperienceData);
-    }
-  });
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.experience) {
+        const storedData = localStorage.getItem("resume");
+        const existingResumeData = storedData ? JSON.parse(storedData) : {};
+        const updatedExperienceData = {
+          ...existingResumeData,
+          experience: value.experience.map((item) => ({
+            position: item?.position || "",
+            employer: item?.employer || "",
+            startDate: item?.startDate || "",
+            endDate: item?.endDate || "",
+            description: item?.description || "",
+          })),
+        };
+        localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
+        setExperienceData(updatedExperienceData);
+      }
+    });
 
-  return () => subscription.unsubscribe();
-}, [watch, setExperienceData]);
+    return () => subscription.unsubscribe();
+  }, [watch, setExperienceData]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("resume");
@@ -85,10 +90,48 @@ useEffect(() => {
   }, [setExperienceData]);
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
-    console.log(data);
+    console.log(data.experience[1]);
+    const filteredExperience = data.experience.filter((item) => {
+      return (
+        item.position.trim() !== "" ||
+        item.employer.trim() !== "" ||
+        item.startDate.trim() !== "" ||
+        item.endDate.trim() !== "" ||
+        item.description.trim() !== ""
+      );
+    });
+
+    data.experience = filteredExperience;
+
+    localStorage.setItem(
+      "resume",
+      JSON.stringify({ experience: filteredExperience })
+    );
+    setExperienceData({ experience: filteredExperience });
     navigate("/education");
   };
 
+  useEffect(() => {
+    const updatedRequiredFields = fields.map((item, index) => {
+      if (index === 0) {
+        return { [index]: true };
+      }
+
+      const allFieldsEmpty =
+        item.description.trim().length === 0 &&
+        item.employer.trim().length === 0 &&
+        item.endDate.trim().length === 0 &&
+        item.startDate.trim().length === 0 &&
+        item.position.trim().length === 0;
+
+      return { [index]: !allFieldsEmpty };
+    });
+
+    setRequired(Object.assign({}, ...updatedRequiredFields));
+  }, [fields, watch, setExperienceData]);
+
+  console.log(errors);
+  console.log(required);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <Helmet>
@@ -127,12 +170,12 @@ useEffect(() => {
                     placeholder="დეველოპერი, დიზაინერი, ა.შ."
                     type="text"
                     {...register(`experience.${index}.position`, {
-                      required: { value: true, message: "required" },
-                      minLength: { value: 2, message: "Minimum 2 characters" },
-                      pattern: {
-                        value: /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/,
-                        message: "Only Georgian characters allowed",
+                      required: {
+                        value: required[index] || false,
+                        message:
+                          "Position is required for all but the first entry",
                       },
+                      minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   />
 
@@ -168,7 +211,11 @@ useEffect(() => {
                     placeholder="დამსაქმებელი"
                     type="text"
                     {...register(`experience.${index}.employer`, {
-                      required: { value: true, message: "required" },
+                      required: {
+                        value: required[index] || false,
+                        message:
+                          "Position is required for all but the first entry",
+                      },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   />
@@ -203,7 +250,11 @@ useEffect(() => {
                     id={`experience[${index}].startDate`}
                     type="date"
                     {...register(`experience.${index}.startDate`, {
-                      required: { value: true, message: "required" },
+                      required: {
+                        value: required[index] || false,
+                        message:
+                          "Position is required for all but the first entry",
+                      },
                     })}
                   />
                 </div>
@@ -219,7 +270,11 @@ useEffect(() => {
                     id={`experience[${index}].endDate`}
                     type="date"
                     {...register(`experience.${index}.endDate`, {
-                      required: { value: true, message: "required" },
+                      required: {
+                        value: required[index] || false,
+                        message:
+                          "Position is required for all but the first entry",
+                      },
                     })}
                   />
                 </div>
@@ -243,7 +298,11 @@ useEffect(() => {
                     id={`experience[${index}].description`}
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
                     {...register(`experience.${index}.description`, {
-                      required: { value: true, message: "required" },
+                      required: {
+                        value: required[index] || false,
+                        message:
+                          "Position is required for all but the first entry",
+                      },
                       minLength: { value: 5, message: "Minimum 5 characters" },
                     })}
                   ></Textarea>
