@@ -65,6 +65,7 @@ function ExperiencePage() {
     control,
     name: "experience",
   });
+
   useEffect(() => {
     const subscription = watch((value) => {
       if (value.experience) {
