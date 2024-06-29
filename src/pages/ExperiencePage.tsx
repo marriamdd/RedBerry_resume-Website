@@ -20,6 +20,10 @@ function ExperiencePage() {
 
   const [required, setRequired] = useState<Irequired>({});
 
+  // const handleRefresh = () => {
+  //   window.location.reload();
+  // };
+
   const {
     handleSubmit,
     register,
@@ -70,6 +74,25 @@ function ExperiencePage() {
   }, [watch, setExperienceData]);
 
   useEffect(() => {
+    const updatedRequiredFields = fields.map((item, index) => {
+      if (index === 0) {
+        return { [index]: true };
+      }
+
+      const allFieldsEmpty =
+        item.description.trim().length === 0 &&
+        item.employer.trim().length === 0 &&
+        item.endDate.trim().length === 0 &&
+        item.startDate.trim().length === 0 &&
+        item.position.trim().length === 0;
+
+      return { [index]: !allFieldsEmpty };
+    });
+
+    setRequired(Object.assign({}, ...updatedRequiredFields));
+  }, [fields, watch, setExperienceData, reset, append]);
+
+  useEffect(() => {
     const storedData = localStorage.getItem("resume");
     if (storedData) {
       const data = JSON.parse(storedData);
@@ -110,25 +133,6 @@ function ExperiencePage() {
     setExperienceData({ experience: filteredExperience });
     navigate("/education");
   };
-
-  useEffect(() => {
-    const updatedRequiredFields = fields.map((item, index) => {
-      if (index === 0) {
-        return { [index]: true };
-      }
-
-      const allFieldsEmpty =
-        item.description.trim().length === 0 &&
-        item.employer.trim().length === 0 &&
-        item.endDate.trim().length === 0 &&
-        item.startDate.trim().length === 0 &&
-        item.position.trim().length === 0;
-
-      return { [index]: !allFieldsEmpty };
-    });
-
-    setRequired(Object.assign({}, ...updatedRequiredFields));
-  }, [fields, watch, setExperienceData]);
 
   console.log(errors);
   console.log(required);
@@ -177,6 +181,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
+                    // onBlur={handleRefresh}
                   />
 
                   {errors.experience?.[index]?.position && (
@@ -218,6 +223,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
+                    // onBlur={handleRefresh}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -256,6 +262,7 @@ function ExperiencePage() {
                           "Position is required for all but the first entry",
                       },
                     })}
+                    // onBlur={handleRefresh}
                   />
                 </div>
                 <div>
