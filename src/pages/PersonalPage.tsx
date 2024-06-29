@@ -51,7 +51,7 @@ function PersonalPage() {
  const uploadImageDisplay = (event: React.ChangeEvent<HTMLInputElement>) => {
    const file = event.target.files?.[0];
    if (file) {
-     // Create a FileList manually with the single file
+
      const fileList = {
        length: 1,
        item: () => file,
@@ -66,7 +66,7 @@ function PersonalPage() {
      const cachedURL = URL.createObjectURL(file);
      setAvatar(cachedURL);
 
-     // Set the value with the FileList containing the single File object
+
      setValue("file", fileList as never, { shouldValidate: true });
      trigger("file");
    }
