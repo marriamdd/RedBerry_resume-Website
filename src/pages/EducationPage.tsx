@@ -10,6 +10,7 @@ import Graduation from "../components/Graduation";
 import Description from "../components/Description";
 import { useContext, useEffect } from "react";
 import { Context } from "../App";
+import { useNavigate } from "react-router-dom";
 
 export interface FormData {
   education: {
@@ -41,6 +42,25 @@ function EducationPage() {
       ],
     },
   });
+
+  const navigate = useNavigate();
+
+  function handleBackPage() {
+    localStorage.setItem(
+      "resume",
+      JSON.stringify({
+        education: [
+          {
+            university: "",
+            finish_date: "",
+            degree: "",
+            description: "",
+          },
+        ],
+      })
+    );
+    navigate(-1);
+  }
 
   const { setEducationData } = useContext(Context);
 
@@ -100,7 +120,7 @@ function EducationPage() {
       <Helmet>
         <title>Education</title>
       </Helmet>
-      <img src={BackArrow} alt="back-arrow" />
+      <img src={BackArrow} alt="back-arrow" onClick={handleBackPage} />
       <EducationFormDiv>
         <EducationHeader>
           <h2>ᲒᲐᲜᲐᲗᲚᲔᲑᲐ</h2>
@@ -161,7 +181,9 @@ function EducationPage() {
           </AddSchool>
 
           <FormButtons>
-            <Button type="button">უკან</Button>
+            <Button type="button" onClick={() => navigate(-1)}>
+              უკან
+            </Button>
             <Button>დასრულება</Button>
           </FormButtons>
         </Form>
