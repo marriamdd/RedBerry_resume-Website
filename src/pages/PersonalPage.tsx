@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState, useRef, ChangeEvent } from "react";
 import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
@@ -9,28 +9,23 @@ import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-
-interface IFormInput {
-  name: string;
-  surname: string;
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  data: string;
-  info: string;
-  file: string | null;
-  e: string;
-}
+import { IFormInput } from "../App";
+import { useContext } from "react";
+import { Context } from "../App";
 
 function PersonalPage() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { personalData, setPersonalData } = useContext(Context);
+
   const {
+    control,
+    setValue,
+    trigger,
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<IFormInput>({});
 
   const navigate = useNavigate();
@@ -53,13 +48,32 @@ function PersonalPage() {
     }
   };
 
-  const uploadImageDisplay = () => {
-    const uploadFile = fileUploadRef.current?.files?.[0];
-    if (uploadFile) {
-      const cachedURL = URL.createObjectURL(uploadFile);
-      setAvatar(cachedURL);
-    }
-  };
+ const uploadImageDisplay = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const file = event.target.files?.[0];
+   if (file) {
+     // Create a FileList manually with the single file
+     const fileList = {
+       length: 1,
+       item: () => file,
+       [Symbol.iterator]: () => ({
+         next: () => ({
+           value: file,
+           done: false,
+         }),
+       }),
+     };
+
+     const cachedURL = URL.createObjectURL(file);
+     setAvatar(cachedURL);
+
+     // Set the value with the FileList containing the single File object
+     setValue("file", fileList as never, { shouldValidate: true });
+     trigger("file");
+   }
+ };
+
+
+
   const { handleGeorgianInput } = useGeorgianPattern();
   const { handleTextarea } = useGeorgianPatternTextarea();
 
@@ -71,6 +85,42 @@ function PersonalPage() {
     e.target.value = sanitizedValue;
   };
 
+  useEffect(() => {
+    const storedData = localStorage.getItem("resume");
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      if (data && data.personaldata) {
+        reset(data.personaldata);
+      }
+    }
+  }, [reset]);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      const updatedPersonalData = {
+        personaldata: {
+          name: value.name || "",
+          surname: value.surname || "",
+          email: value.email || "",
+          phone: value.phone || "",
+          info: value.info || "",
+          file: value.file || null,
+        },
+      };
+
+      const storedData = localStorage.getItem("resume");
+      const existingData = storedData ? JSON.parse(storedData) : {};
+      const mergedData = {
+        ...existingData,
+        ...updatedPersonalData,
+      };
+
+      localStorage.setItem("resume", JSON.stringify(mergedData));
+      setPersonalData(mergedData.personaldata);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setPersonalData]);
   return (
     <MainDiv>
       <Helmet>
@@ -214,26 +264,34 @@ function PersonalPage() {
               marginBottom: "4.6rem",
             }}
           >
-            <input
-              type="file"
-              style={{ display: "none" }}
-              {...register("file", {
-                required: false,
-              })}
-              id="file"
-              ref={fileUploadRef}
-              onChange={uploadImageDisplay}
+            <Controller
+              name="file"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <>
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    ref={fileUploadRef}
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                      uploadImageDisplay(e);
+                    }}
+                  />
+                  <Label>პირადი ფოტოს ატვირთვა</Label>
+                  <button
+                    type="button"
+                    onClick={handleImageChange}
+                    className="upload"
+                  >
+                    ატვირთვა
+                  </button>
+                  {avatar && <img src={avatar} alt="Uploaded avatar" />}
+                  {errors.file && <img src={warningIcon} alt="warningIcon" />}
+                </>
+              )}
             />
-            <Label>პირადი ფოტოს ატვირთვა</Label>
-            <button
-              type="button"
-              onClick={handleImageChange}
-              className="upload"
-            >
-              ატვირთვა
-            </button>
-            {avatar && <img src={avatar} alt="Uploaded avatar" />}
-            {errors.file && <img src={warningIcon} alt="warningIcon" />}
           </div>
 
           <div>

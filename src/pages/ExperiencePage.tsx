@@ -13,9 +13,9 @@ import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
 function ExperiencePage() {
-  const { setExperienceData, setShowExperienceInResume } = useContext(Context);
+  const { setExperienceData } = useContext(Context);
   const navigate = useNavigate();
-  setShowExperienceInResume(true);
+  // setShowExperienceInResume(true);
 
   const {
     handleSubmit,
@@ -42,26 +42,28 @@ function ExperiencePage() {
     control,
     name: "experience",
   });
+useEffect(() => {
+  const subscription = watch((value) => {
+    if (value.experience) {
+      const storedData = localStorage.getItem("resume");
+      const existingResumeData = storedData ? JSON.parse(storedData) : {};
+      const updatedExperienceData = {
+        ...existingResumeData,
+        experience: value.experience.map((item) => ({
+          position: item?.position || "",
+          employer: item?.employer || "",
+          startDate: item?.startDate || "",
+          endDate: item?.endDate || "",
+          description: item?.description || "",
+        })),
+      };
+      localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
+      setExperienceData(updatedExperienceData);
+    }
+  });
 
-  useEffect(() => {
-    const subscription = watch((value) => {
-      if (value.experience) {
-        const updatedExperienceData = {
-          experience: value.experience.map((item) => ({
-            position: item?.position || "",
-            employer: item?.employer || "",
-            startDate: item?.startDate || "",
-            endDate: item?.endDate || "",
-            description: item?.description || "",
-          })),
-        };
-        localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
-        setExperienceData(updatedExperienceData);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch, setExperienceData]);
+  return () => subscription.unsubscribe();
+}, [watch, setExperienceData]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("resume");
