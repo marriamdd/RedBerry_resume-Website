@@ -1,9 +1,9 @@
-import { useContext } from "react";
+// import { useContext } from "react";
 import styled from "styled-components";
-import { Context } from "../App";
+// import { Context } from "../App";
 
 export default function Experience() {
-  const { experienceData } = useContext(Context);
+  // const { experienceData } = useContext(Context);
 
   return (
     <>
@@ -11,7 +11,7 @@ export default function Experience() {
         <StyledExperience>
           <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
 
-          {experienceData.experience.map((item, index) => (
+          {/* {experienceData.experience.map((item, index) => (
             <div
               style={{
                 display: "flex",
@@ -34,7 +34,7 @@ export default function Experience() {
               </div>
               <p className="experience-text">{item.description}</p>
             </div>
-          ))}
+          ))} */}
         </StyledExperience>
       }
     </>
