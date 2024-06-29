@@ -3,6 +3,7 @@ import downArrow from "../assets/downArrow.svg";
 import styled from "styled-components";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { FormData } from "../pages/EducationPage";
+import warning from "../assets/ph_warning-fill.svg";
 
 interface IDegreeChoices {
   S: string;
@@ -14,9 +15,15 @@ interface DegreeProps {
   register: UseFormRegister<FormData>;
   setValue: UseFormSetValue<FormData>;
   index: number;
+  error?: string;
 }
 
-export default function Degree({ register, setValue, index }: DegreeProps) {
+export default function Degree({
+  register,
+  setValue,
+  index,
+  error,
+}: DegreeProps) {
   const [isDegreeModalOpen, setIsDegreeModalOpen] = useState(false);
   const [degreeChoices, setDegreeChoices] = useState<IDegreeChoices>({
     S: "",
@@ -41,21 +48,32 @@ export default function Degree({ register, setValue, index }: DegreeProps) {
   useEffect(() => {
     setValue(`education.${index}.degree`, degree);
   }, [degree, index, setValue]);
+
+  console.log(error);
   return (
-    <StyledDegree>
+    <StyledDegree error={error}>
       <p>ხარისხი</p>
       <Select>
-        <SelectValue onClick={() => setIsDegreeModalOpen((modal) => !modal)}>
-          {!degree && <h3>აირჩიეთ ხარისხი</h3>}
-          {degree && (
+        <SelectValueDiv>
+          <SelectValue
+            error={error}
+            onClick={() => setIsDegreeModalOpen((modal) => !modal)}
+          >
             <DegreeInput
+              placeholder="აირჩიეთ ხარისხი"
               value={degree}
-              {...register(`education.${index}.degree`)}
+              {...register(`education.${index}.degree`, {
+                required: {
+                  value: true,
+                  message: "required",
+                },
+              })}
             />
-          )}
 
-          <img src={downArrow} alt="down-arrow" />
-        </SelectValue>
+            <img src={downArrow} alt="down-arrow" />
+          </SelectValue>
+          {error && <ErrorImg src={warning} alt="warning" />}
+        </SelectValueDiv>
 
         {isDegreeModalOpen && (
           <SelectOptions onClick={() => setIsDegreeModalOpen(false)}>
@@ -75,8 +93,12 @@ export default function Degree({ register, setValue, index }: DegreeProps) {
   );
 }
 
-const StyledDegree = styled.div`
+const StyledDegree = styled.div<{ error?: string }>`
   width: 100%;
+
+  & > p {
+    color: ${(props) => (props.error ? "#E52F2F" : "#000000")};
+  }
 `;
 
 const Select = styled.div`
@@ -84,23 +106,28 @@ const Select = styled.div`
   position: relative;
 `;
 
-const SelectValue = styled.div`
+const SelectValueDiv = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+`;
+
+const SelectValue = styled.div<{ error?: string }>`
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #bcbcbc;
+  border: ${(props) => (props.error ? "1px solid #EF5050" : "#BCBCBC")};
   height: 4.8rem;
   padding: 1.3rem 2rem 1.4rem 1.6rem;
   border-radius: 4px 0px 0px 0px;
   background: #ffffff;
+`;
 
-  & > h3 {
-    font-size: 1.6rem;
-    font-weight: 400;
-    line-height: 2.1rem;
-    color: "rgba(0, 0, 0, 0.6)";
-  }
+const ErrorImg = styled.img`
+  margin-right: -2.4rem;
 `;
 
 const DegreeInput = styled.input`
@@ -119,12 +146,11 @@ const SelectOptions = styled.div`
   position: absolute;
   width: 100%;
   background: #ffffff;
-
   display: flex;
   flex-direction: column;
-  /* gap: 2rem; */
   border-radius: 4px;
   box-shadow: 0px 16px 28px 0px rgba(0, 0, 0, 0.24);
+  z-index: 2;
 
   & > h4 {
     font-size: 1.4rem;

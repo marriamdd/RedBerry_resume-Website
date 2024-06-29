@@ -44,6 +44,8 @@ function EducationPage() {
     },
   });
 
+  console.log(errors);
+
   const { fields, append } = useFieldArray<FormData>({
     control,
     name: "education",
@@ -112,39 +114,58 @@ function EducationPage() {
                     register={register}
                     setValue={setValue}
                     index={index}
+                    error={errors.education?.[index]?.degree?.message}
                   />
-                  <Graduation>
-                    <p>დამთავრების რიცხვი</p>
-                    <input
-                      type="date"
-                      onKeyDown={handleGeorgianInput}
-                      {...register(`education.${index}.finish_date`)}
-                    />
-                  </Graduation>
+                  <GraduationDiv>
+                    <Graduation
+                      error={errors.education?.[index]?.finish_date?.message}
+                    >
+                      <p>დამთავრების რიცხვი</p>
+                      <input
+                        type="date"
+                        onKeyDown={handleGeorgianInput}
+                        {...register(`education.${index}.finish_date`, {
+                          required: { value: true, message: "required" },
+                        })}
+                      />
+                    </Graduation>
+                    {errors.education?.[index]?.finish_date?.message && (
+                      <ErrorImg src={warning} alt="warning" />
+                    )}
+                  </GraduationDiv>
                 </DegreeAndGraduation>
 
-                <Description>
-                  <p>აღწერა</p>
-                  <textarea
-                    onKeyDown={handleTextarea}
-                    placeholder="განათლების აღწერა"
-                    id={`education[${index}].description`}
-                    {...register(`education.${index}.description`)}
-                  ></textarea>
+                <DescriptionDiv>
+                  <Description
+                    error={errors.education?.[index]?.description?.message}
+                  >
+                    <p>აღწერა</p>
+                    <textarea
+                      onKeyDown={handleTextarea}
+                      placeholder="განათლების აღწერა"
+                      id={`education[${index}].description`}
+                      {...register(`education.${index}.description`, {
+                        required: { value: true, message: "required" },
+                      })}
+                    ></textarea>
 
-                  {geoErrorMessageTextarea[
-                    `education[${index}].description`
-                  ] && (
-                    <p style={{ color: "red" }}>
-                      {
-                        geoErrorMessageTextarea[
-                          `education[${index}].description`
-                        ]
-                      }
-                      &nbsp;
-                    </p>
+                    {geoErrorMessageTextarea[
+                      `education[${index}].description`
+                    ] && (
+                      <p style={{ color: "red" }}>
+                        {
+                          geoErrorMessageTextarea[
+                            `education[${index}].description`
+                          ]
+                        }
+                        &nbsp;
+                      </p>
+                    )}
+                  </Description>
+                  {errors.education?.[index]?.description?.message && (
+                    <ErrorImg src={warning} alt="warning" />
                   )}
-                </Description>
+                </DescriptionDiv>
               </DinamicField>
             );
           })}
@@ -191,7 +212,6 @@ const StyledEducation = styled.div`
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 2.1rem;
-    color: #000000;
   }
 
   & > input {
@@ -251,7 +271,7 @@ const SchoolDiv = styled.div`
 `;
 
 const ErrorImg = styled.img`
-  margin-right: -2.4rem;
+  margin-right: -5rem;
 `;
 
 const SucessImg = styled.img`
@@ -277,7 +297,7 @@ const School = styled.div<{ error?: string }>`
     outline: 1px solid #bcbcbc;
     margin-top: 0.8rem;
 
-    border: ${(props) => (props.error ? "1px solid red" : "#BCBCBC")};
+    border: ${(props) => (props.error ? "1px solid #EF5050" : "#BCBCBC")};
 
     &::placeholder {
       font-size: 1.6rem;
@@ -306,7 +326,19 @@ const DegreeAndGraduation = styled.div`
   gap: 5.6rem;
 `;
 
-const Graduation = styled.div`
+const GraduationDiv = styled.div`
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+
+  & > img {
+    margin-top: 2.8rem;
+  }
+`;
+
+const Graduation = styled.div<{ error?: string }>`
   width: 100%;
 
   & > input {
@@ -322,6 +354,7 @@ const Graduation = styled.div`
     border: 1px solid #bcbcbc;
     outline: 1px solid #bcbcbc;
     margin-top: 0.8rem;
+    border: ${(props) => (props.error ? "1px solid #EF5050" : "#BCBCBC")};
 
     &::placeholder {
       font-size: 1.6rem;
@@ -330,9 +363,22 @@ const Graduation = styled.div`
       color: rgba(0, 0, 0, 0.6);
     }
   }
+
+  & > p {
+    color: ${(props) => (props.error ? "#E52F2F" : "#000000")};
+  }
 `;
 
-const Description = styled.div`
+const DescriptionDiv = styled.div`
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+`;
+
+const Description = styled.div<{ error?: string }>`
+  width: 100%;
   margin-top: 4rem;
   border-bottom: 1px solid #c1c1c1;
   padding-bottom: 5.3rem;
@@ -342,6 +388,7 @@ const Description = styled.div`
     padding: 13px 16px 14.5rem 16px;
     border-radius: 4px 0px 0px 0px;
     margin-top: 0.8rem;
+    border: ${(props) => (props.error ? "1px solid #EF5050" : "#BCBCBC")};
 
     &::placeholder {
       font-size: 1.6rem;
@@ -349,6 +396,10 @@ const Description = styled.div`
       line-height: 2.1rem;
       color: #00000099;
     }
+  }
+
+  & > p {
+    color: ${(props) => (props.error ? "#E52F2F" : "#000000")};
   }
 `;
 
