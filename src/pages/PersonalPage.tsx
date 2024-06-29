@@ -14,8 +14,7 @@ import { useContext } from "react";
 import { Context } from "../App";
 
 function PersonalPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { personalData, setPersonalData } = useContext(Context);
+  const {  setPersonalData } = useContext(Context);
 
   const {
     control,
