@@ -1,12 +1,12 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import EducationPage from "./pages/EducationPage";
-import ExperiencePage from "./pages/ExperiencePage";
-import PersonalPage from "./pages/PersonalPage";
-import ResumePage from "./pages/ResumePage";
-import Layout from "./layout/Layout";
-import { GlobalStyles } from "./globalStyles/GlobalStyles";
-import { createContext, useState } from "react";
+import React, { useState, createContext } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import EducationPage from './pages/EducationPage';
+import ExperiencePage from './pages/ExperiencePage';
+import PersonalPage from './pages/PersonalPage';
+import ResumePage from './pages/ResumePage';
+import Layout from './layout/Layout';
+import { GlobalStyles } from './globalStyles/GlobalStyles';
 
 export interface IExperience {
   experience: {
@@ -18,6 +18,20 @@ export interface IExperience {
   }[];
 }
 
+export interface IFormInput {
+  name: string;
+  surname: string;
+  phone: string;
+  email: string;
+  address: string;
+  state: string;
+  data: string;
+  info: string;
+  file: FileList | null;
+  e: string;
+  personal: IFormInput[];
+}
+
 export interface IContext {
   experienceData: IExperience;
   setExperienceData: React.Dispatch<React.SetStateAction<IExperience>>;
@@ -25,6 +39,8 @@ export interface IContext {
   showExperienceInResume: boolean;
   setShowExperienceInResume: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
+  personalData: IFormInput;
+  setPersonalData: React.Dispatch<React.SetStateAction<IFormInput>>;
 }
 
 export const Context = createContext<IContext>({
@@ -33,20 +49,54 @@ export const Context = createContext<IContext>({
   experienceData: {
     experience: [],
   },
-
   setExperienceData: () => {},
   showExperienceInResume: false,
   setShowExperienceInResume: () => {},
+  personalData: {
+    name: "",
+    surname: "",
+    phone: "",
+    email: "",
+    address: "",
+    state: "",
+    data: "",
+    info: "",
+    file: null,
+    e: "",
+    personal: []
+  },
+  setPersonalData: () => {},
 });
+
 function App() {
   const [showExperienceInResume, setShowExperienceInResume] = useState(false);
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [experienceData, setExperienceData] = useState<IExperience>(() => {
-    const data = localStorage.getItem("resume");
+    const data = localStorage.getItem('resume');
     if (data) {
       return JSON.parse(data) as IExperience;
     }
     return { experience: [] };
+  });
+
+  const [personalData, setPersonalData] = useState<IFormInput>(() => {
+    const data = localStorage.getItem('resume');
+    if (data) {
+      return JSON.parse(data) as IFormInput;
+    }
+    return {
+      name: '',
+      surname: '',
+      phone: '',
+      email: '',
+      address: '',
+      state: '',
+      data: '',
+      info: '',
+      file: null,
+      e: '',
+      personal: [],
+    };
   });
 
   return (
@@ -60,6 +110,8 @@ function App() {
           setExperienceData,
           showExperienceInResume,
           setShowExperienceInResume,
+          personalData,
+          setPersonalData,
         }}
       >
         <BrowserRouter>

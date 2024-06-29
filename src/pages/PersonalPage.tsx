@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
-import { useEffect, useState, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState, useRef, ChangeEvent } from "react";
 import { Label, TextInput } from "../styles/FormStyles";
 import { Button } from "../styles/Buttons";
 import warningIcon from "../assets/ph_warning-fill.svg";
@@ -8,29 +8,24 @@ import correctIcon from "../assets/icon-check.svg";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import { useNavigate } from "react-router-dom";
-interface IFormInput {
-  name: string;
-  surname: string;
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  data: string;
-  info: string;
-}
+import { Helmet } from "react-helmet";
+import { IFormInput } from "../App";
+import { useContext } from "react";
+import { Context } from "../App";
 
 function PersonalPage() {
+  const {  setPersonalData } = useContext(Context);
+
   const {
+    control,
+    setValue,
+    trigger,
     register,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<IFormInput>({
-    // mode: "onChange",
-    // reValidateMode: "onChange",
-  });
+    reset,
+  } = useForm<IFormInput>({});
 
   const navigate = useNavigate();
   const onSubmit = (data: IFormInput) => {
@@ -52,21 +47,85 @@ function PersonalPage() {
     }
   };
 
-  const uploadImageDisplay = () => {
-    const uploadFile = fileUploadRef.current?.files?.[0];
-    if (uploadFile) {
-      const cachedURL = URL.createObjectURL(uploadFile);
-      setAvatar(cachedURL);
-    }
+ const uploadImageDisplay = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const file = event.target.files?.[0];
+   if (file) {
+
+     const fileList = {
+       length: 1,
+       item: () => file,
+       [Symbol.iterator]: () => ({
+         next: () => ({
+           value: file,
+           done: false,
+         }),
+       }),
+     };
+
+     const cachedURL = URL.createObjectURL(file);
+     setAvatar(cachedURL);
+
+
+     setValue("file", fileList as never, { shouldValidate: true });
+     trigger("file");
+   }
+ };
+
+
+
+  const { handleGeorgianInput } = useGeorgianPattern();
+  const { handleTextarea } = useGeorgianPatternTextarea();
+
+  const phoneValue = watch("phone");
+
+  const handlePhoneInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const sanitizedValue = value.replace(/[^\d+]/g, "");
+    e.target.value = sanitizedValue;
   };
-  const { handleGeorgianInput,  } = useGeorgianPattern();
-  const { handleTextarea,  } =
-    useGeorgianPatternTextarea();
 
+  useEffect(() => {
+    const storedData = localStorage.getItem("resume");
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      if (data && data.personaldata) {
+        reset(data.personaldata);
+      }
+    }
+  }, [reset]);
 
+  useEffect(() => {
+    const subscription = watch((value) => {
+      const updatedPersonalData = {
+        personaldata: {
+          name: value.name || "",
+          surname: value.surname || "",
+          email: value.email || "",
+          phone: value.phone || "",
+          info: value.info || "",
+          file: value.file || null,
+        },
+      };
+
+      const storedData = localStorage.getItem("resume");
+      const existingData = storedData ? JSON.parse(storedData) : {};
+      const mergedData = {
+        ...existingData,
+        ...updatedPersonalData,
+      };
+
+      localStorage.setItem("resume", JSON.stringify(mergedData));
+      setPersonalData(mergedData.personaldata);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setPersonalData]);
   return (
     <MainDiv>
-      <div style={{ marginLeft: "6rem" }}>
+      <Helmet>
+        <title>Personal</title>
+      </Helmet>
+      <div style={{ marginLeft: "11rem" }}>
         <Header style={{ display: "flex" }}>
           <img
             style={{
@@ -111,7 +170,6 @@ function PersonalPage() {
                       value: 2,
                       message: "მინიმუმ 2 ასო",
                     },
-                    
                   })}
                 />
                 <p>მინიმუმ 2 ასო, ქართული ასო</p>
@@ -142,38 +200,53 @@ function PersonalPage() {
                 }}
               />
             )}
-            <TextInput>
-              <Label
-                className={errors.surname ? "errorLabel" : "label"}
-                htmlFor="surname"
-              >
-                გვარი
-              </Label>
-              <input
-                className={
-                  watch().surname
-                    ? "corrected"
-                    : errors.surname
-                    ? "errorInput"
-                    : "input"
-                }
-                id="surname"
-                onKeyDown={handleGeorgianInput}
-                type="text"
-                {...register("surname", {
-                  required: "გვარის ველი სავალდებულოა",
-                  minLength: {
-                    value: 2,
-                    message: "მინიმუმ 2 ასო",
-                  },
-                  pattern: {
-                    value: /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/,
-                    message: "მხოლოდ ქართული ასოები",
-                  },
-                })}
-              />
-              <p>მინიმუმ 2 ასო, ქართული ასო</p>
-            </TextInput>
+            <div style={{ position: "relative", width: "100%" }}>
+              <TextInput>
+                <Label
+                  className={errors.surname ? "errorLabel" : "label"}
+                  htmlFor="surname"
+                >
+                  გვარი
+                </Label>
+                <input
+                  className={
+                    watch().surname
+                      ? "corrected"
+                      : errors.surname
+                      ? "errorInput"
+                      : "input"
+                  }
+                  id="surname"
+                  onKeyDown={handleGeorgianInput}
+                  type="text"
+                  {...register("surname", {
+                    required: "გვარის ველი სავალდებულოა",
+                    minLength: {
+                      value: 2,
+                      message: "მინიმუმ 2 ასო",
+                    },
+                    pattern: {
+                      value: /^[\u10A0-\u10FF\u2D00-\u2D2F]+$/,
+                      message: "მხოლოდ ქართული ასოები",
+                    },
+                  })}
+                />
+                <p>მინიმუმ 2 ასო, ქართული ასო</p>
+              </TextInput>
+              {watch().surname?.length >= 2 && (
+                <img
+                  style={{
+                    position: "absolute",
+                    bottom: "4.5rem",
+                    right: "1.5rem",
+                    width: "2.4rem",
+                    height: "2.4rem",
+                  }}
+                  src={correctIcon}
+                  alt="ValidateIcon"
+                />
+              )}
+            </div>
             {errors.surname && (
               <img
                 src={warningIcon}
@@ -190,29 +263,42 @@ function PersonalPage() {
               marginBottom: "4.6rem",
             }}
           >
-            <input
-              type="file"
-              style={{ display: "none" }}
-              id="file"
-              ref={fileUploadRef}
-              onChange={uploadImageDisplay}
+            <Controller
+              name="file"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <>
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    ref={fileUploadRef}
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                      uploadImageDisplay(e);
+                    }}
+                  />
+                  <Label>პირადი ფოტოს ატვირთვა</Label>
+                  <button
+                    type="button"
+                    onClick={handleImageChange}
+                    className="upload"
+                  >
+                    ატვირთვა
+                  </button>
+                  {avatar && <img src={avatar} alt="Uploaded avatar" />}
+                  {errors.file && <img src={warningIcon} alt="warningIcon" />}
+                </>
+              )}
             />
-            <Label>პირადი ფოტოს ატვირთვა</Label>
-            <button
-              type="button"
-              onClick={handleImageChange}
-              className="upload"
-            >
-              ატვირთვა
-            </button>
-            {avatar && <img src={avatar} alt="Uploaded avatar" />}
           </div>
+
           <div>
             <Label htmlFor="info">ჩემ შესახებ (არასავალდებულო)</Label>
             <textarea
-              className="info"
               id="info"
               onKeyDown={handleTextarea}
+              className={watch().info ? "correctedInfo" : "info"}
               placeholder="ზოგადი ინფო შენ შესახებ"
               {...register("info", {
                 required: false,
@@ -223,77 +309,140 @@ function PersonalPage() {
               })}
             ></textarea>
           </div>
-          <TextInput style={{ marginTop: "2.5rem", position: "relative" }}>
-            <Label
-              htmlFor="email"
-              className={errors.email ? "errorLabel" : "label"}
-            >
-              ელ.ფოსტა{" "}
-            </Label>
-            <input
-              className={errors.email ? "errorInput" : "input"}
-              id="email"
-              // onKeyDown={handleGeorgianInput}
-              type="email"
-              {...register("email", {
-                required: "ელ.ფოსტა სავალდებულოა",
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@redberry\.ge$/,
-                  message: "Email must end with @redberry.ge",
-                },
-              })}
-            />
-            <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
+          <div style={{ position: "relative", width: "100%" }}>
+            <TextInput style={{ marginTop: "2.5rem", position: "relative" }}>
+              <Label
+                htmlFor="email"
+                className={errors.email ? "errorLabel" : "label"}
+              >
+                ელ.ფოსტა{" "}
+              </Label>
+              <input
+                className={
+                  watch().email !== undefined &&
+                  watch().email.includes("@redberry.ge")
+                    ? "corrected"
+                    : errors.email
+                    ? "errorInput"
+                    : "input"
+                }
+                id="email"
+                type="email"
+                {...register("email", {
+                  required: "ელ.ფოსტა სავალდებულოა",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@redberry\.ge$/,
+                    message: "Email must end with @redberry.ge",
+                  },
+                })}
+              />
+              <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
 
-            {errors.email ? (
-              <img
-                src={warningIcon}
-                alt="warningIcon"
-                style={{
-                  width: "2.4rem",
-                  height: "2.4rem",
-                  position: "absolute",
-                  right: "-6%",
-                  top: "44%",
+              {watch().email !== undefined &&
+                watch().email.includes("@redberry.ge") && (
+                  <img
+                    style={{
+                      position: "absolute",
+                      bottom: "4.5rem",
+                      right: "1.5rem",
+                      width: "2.4rem",
+                      height: "2.4rem",
+                    }}
+                    src={correctIcon}
+                    alt="ValidateIcon"
+                  />
+                )}
+
+              {errors.email ? (
+                <img
+                  src={warningIcon}
+                  alt="warningIcon"
+                  style={{
+                    width: "2.4rem",
+                    height: "2.4rem",
+                    position: "absolute",
+                    right: "-6%",
+                    top: "44%",
+                  }}
+                />
+              ) : null}
+            </TextInput>
+          </div>
+          <div style={{ position: "relative", width: "100%" }}>
+            <TextInput style={{ marginTop: "2.5rem", position: "relative" }}>
+              <Label
+                htmlFor="phone"
+                className={errors.phone ? "errorLabel" : ""}
+              >
+                მობილურის ნომერი
+              </Label>
+              <input
+                className={
+                  phoneValue &&
+                  phoneValue.includes("+995") &&
+                  phoneValue.length === 13
+                    ? "corrected"
+                    : errors.phone
+                    ? "errorInput"
+                    : "input"
+                }
+                id="phone"
+                type="tel"
+                placeholder="+995XXXXXXXXX"
+                {...register("phone", {
+                  required: "მობილურის ნომერი სავალდებულოა",
+                  pattern: {
+                    value: /^\+995\d{9}$/,
+                    message:
+                      "უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს",
+                  },
+                })}
+                onInput={handlePhoneInput}
+                onKeyDown={(e) => {
+                  if (
+                    !/[0-9+]/.test(e.key) &&
+                    ![
+                      "Backspace",
+                      "ArrowLeft",
+                      "ArrowRight",
+                      "Delete",
+                    ].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
                 }}
               />
-            ) : null}
-          </TextInput>
-          <TextInput style={{ marginTop: "2.5rem", position: "relative" }}>
-            <Label
-              htmlFor="phone"
-              className={errors.phone ? "errorLabel" : "label"}
-            >
-              მობილურის ნომერი
-            </Label>
-            <input
-              className={errors.phone ? "errorInput" : "input"}
-              id="phone"
-              type="text"
-              {...register("phone", {
-                required: "მობილურის ნომერი სავალდებულოა",
-                pattern: {
-                  value: /^\+995\d{9}$/,
-                  message:
-                    "უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს",
-                },
-              })}
-            />
-            <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
-            {errors.phone && (
-              <img
-                src={warningIcon}
-                alt="warningIcon"
-                style={{
-                  width: "2.4rem",
-                  height: "2.4rem",
-                  position: "absolute",
-                  right: "-6%",
-                  top: "44%",
-                }}
-              />
-            )}
-          </TextInput>
+              <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
+              {phoneValue &&
+                phoneValue.includes("+995") &&
+                phoneValue.length === 13 && (
+                  <img
+                    style={{
+                      position: "absolute",
+                      bottom: "4.5rem",
+                      right: "1.5rem",
+                      width: "2.4rem",
+                      height: "2.4rem",
+                    }}
+                    src={correctIcon}
+                    alt="ValidateIcon"
+                  />
+                )}
+              {errors.phone && (
+                <img
+                  src={warningIcon}
+                  alt="warningIcon"
+                  style={{
+                    width: "2.4rem",
+                    height: "2.4rem",
+                    position: "absolute",
+                    right: "-6%",
+                    top: "44%",
+                  }}
+                />
+              )}
+            </TextInput>
+          </div>
           <div
             style={{
               display: "flex",
@@ -376,18 +525,37 @@ const MainDiv = styled.div`
   .info {
     all: unset;
     display: flex;
-    padding: 1.3rem;
+    padding: 1.3rem 8.3rem 4.6rem 1.6rem;
+    flex: 1 0 0;
     justify-content: center;
     align-items: center;
     border-radius: 0.4rem;
     border: 1px solid #bcbcbc;
     background: #fff;
-    width: 100%;
+    width: 80%;
     margin-top: 0.8rem;
     resize: none;
     min-height: 10rem;
+    align-self: stretch;
+    font-size: 1.6rem;
   }
-
+  .correctedInfo {
+    all: unset;
+    display: flex;
+    padding: 1.3rem 8.3rem 4.6rem 1.6rem;
+    flex: 1 0 0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.4rem;
+    border: 1px solid #98e37e;
+    background: #fff;
+    width: 85%;
+    margin-top: 0.8rem;
+    resize: none;
+    min-height: 10rem;
+    align-self: stretch;
+    font-size: 1.6rem;
+  }
   .input {
     display: flex;
     height: 4.8rem;
