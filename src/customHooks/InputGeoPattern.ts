@@ -18,6 +18,8 @@ const useGeorgianPattern = () => {
       "ArrowDown",
       "Home",
       "End",
+      "Enter",
+      " ",
       "-",
       "Shift",
     ];
