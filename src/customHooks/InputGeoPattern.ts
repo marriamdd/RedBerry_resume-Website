@@ -20,6 +20,8 @@ const useGeorgianPattern = () => {
       "End",
       "Enter",
       " ",
+      "-",
+      "Shift",
     ];
     const currentId = event.currentTarget.id;
     if (allowedKeys.includes(event.key) || georgianPattern.test(event.key)) {
