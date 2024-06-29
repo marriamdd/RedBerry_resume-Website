@@ -7,7 +7,7 @@ export default function Education() {
   return (
     <StyledEducation>
       <h2>ᲒᲐᲜᲐᲗᲚᲔᲑᲐ</h2>
-      {educationData.education.map((item, index) => {
+      {educationData.education?.map((item, index) => {
         return (
           <div key={index}>
             <h3>
