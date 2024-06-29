@@ -11,30 +11,31 @@ export default function Experience() {
         <StyledExperience>
           <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
 
-          {experienceData.experience?.map((item, index) => (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "2rem",
-                width: "100%",
-              }}
-              key={index}
-            >
-              <div style={{ display: "flex" }}>
-                <h3>{`${item.position} `}</h3>
+          {experienceData &&
+            experienceData.experience?.map((item, index) => (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "2rem",
+                  width: "100%",
+                }}
+                key={index}
+              >
+                <div style={{ display: "flex" }}>
+                  <h3>{`${item.position} `}</h3>
 
-                {item.employer && <h3>&nbsp;, {item.employer}</h3>}
+                  <h3>&nbsp;, {item.employer}</h3>
+                </div>
+
+                <div style={{ display: "flex" }}>
+                  <span>{`${item.startDate} `}</span>
+
+                  <span>&nbsp;- {item.endDate}</span>
+                </div>
+                <p className="experience-text">{item.description}</p>
               </div>
-
-              <div style={{ display: "flex" }}>
-                <span>{`${item.startDate} `}</span>
-
-                {item.endDate && <span>&nbsp;- {item.endDate}</span>}
-              </div>
-              <p className="experience-text">{item.description}</p>
-            </div>
-          ))}
+            ))}
         </StyledExperience>
       }
     </>

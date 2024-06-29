@@ -23,7 +23,22 @@ function ExperiencePage() {
   // const handleRefresh = () => {
   //   window.location.reload();
   // };
-
+  const handlePageBackClick = () => {
+    localStorage.setItem(
+      "resume",
+      JSON.stringify({
+        experience: [
+          {
+            position: "",
+            employer: "",
+            startDate: "",
+            endDate: "",
+            description: "",
+          },
+        ],
+      })
+    );
+  };
   const {
     handleSubmit,
     register,
@@ -142,7 +157,10 @@ function ExperiencePage() {
         <title>Experience</title>
       </Helmet>
       <img
-        onClick={() => navigate(-1)}
+        onClick={() => {
+          navigate(-1);
+          handlePageBackClick();
+        }}
         style={{
           alignSelf: "flex-start",
           paddingLeft: "4rem",
@@ -359,7 +377,9 @@ function ExperiencePage() {
           >
             <Button
               style={{ marginBottom: "6.5rem" }}
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                navigate(-1);
+              }}
               type="button"
             >
               უკან
