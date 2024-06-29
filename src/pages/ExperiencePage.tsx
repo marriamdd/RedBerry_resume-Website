@@ -9,11 +9,16 @@ import { Label, TextInput } from "../styles/FormStyles";
 import { useContext, useEffect } from "react";
 import { Context, IExperience } from "../App";
 import { Helmet } from "react-helmet";
-import useGeorgianPattern from "../customHooks/InputGeoPattern";
-import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 
 function ExperiencePage() {
+
   const { setExperienceData } = useContext(Context);
+
+  const {
+    setExperienceData,
+    //  setShowExperienceInResume
+  } = useContext(Context);
+
   const navigate = useNavigate();
   // setShowExperienceInResume(true);
 
@@ -23,6 +28,7 @@ function ExperiencePage() {
     control,
     watch,
     reset,
+
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
@@ -62,8 +68,33 @@ useEffect(() => {
     }
   });
 
+
   return () => subscription.unsubscribe();
 }, [watch, setExperienceData]);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.experience) {
+        const storedData = localStorage.getItem("resume");
+        const existingResumeData = storedData ? JSON.parse(storedData) : {};
+        const updatedExperienceData = {
+          ...existingResumeData,
+          experience: value.experience.map((item) => ({
+            position: item?.position || "",
+            employer: item?.employer || "",
+            startDate: item?.startDate || "",
+            endDate: item?.endDate || "",
+            description: item?.description || "",
+          })),
+        };
+        localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
+        setExperienceData(updatedExperienceData);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setExperienceData]);
+
 
   useEffect(() => {
     const storedData = localStorage.getItem("resume");
@@ -89,9 +120,7 @@ useEffect(() => {
     console.log(data);
     navigate("/education");
   };
-  const { handleGeorgianInput, geoErrorMessage } = useGeorgianPattern();
-  const { handleTextarea, geoErrorMessageTextarea } =
-    useGeorgianPatternTextarea();
+
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <Helmet>
@@ -137,7 +166,6 @@ useEffect(() => {
                         message: "Only Georgian characters allowed",
                       },
                     })}
-                    onKeyDown={handleGeorgianInput}
                   />
 
                   {errors.experience?.[index]?.position && (
@@ -157,15 +185,7 @@ useEffect(() => {
                   )}
                 </div>
 
-                <p>
-                  მინიმუმ 2{" "}
-                  {geoErrorMessage[`experience[${index}].position`] && (
-                    <span style={{ color: "red" }}>
-                      {geoErrorMessage[`experience[${index}].position`]}&nbsp;
-                    </span>
-                  )}
-                  სიმბოლო
-                </p>
+                <p>მინიმუმ 2 სიმბოლო</p>
               </TextInput>
               <TextInput error={errors.experience?.[index]?.employer?.message}>
                 <Label
@@ -183,7 +203,6 @@ useEffect(() => {
                       required: { value: true, message: "required" },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    onKeyDown={(event) => handleGeorgianInput(event)}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -201,15 +220,7 @@ useEffect(() => {
                   )}
                 </div>
 
-                <p>
-                  მინიმუმ 2{" "}
-                  {geoErrorMessage[`experience[${index}].employer`] && (
-                    <span style={{ color: "red" }}>
-                      {geoErrorMessage[`experience[${index}].employer`]} &nbsp;
-                    </span>
-                  )}
-                  სიმბოლო
-                </p>
+                <p>მინიმუმ 2 სიმბოლო</p>
               </TextInput>
               <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
@@ -219,6 +230,7 @@ useEffect(() => {
                   >
                     დაწყების რიცხვი
                   </Label>
+
                   <input
                     id={`experience[${index}].startDate`}
                     type="date"
@@ -250,7 +262,6 @@ useEffect(() => {
                   paddingBottom: "5rem",
                   borderBottom: "1px solid #C1C1C1",
                 }}
-                onKeyDown={handleGeorgianInput}
               >
                 <Label
                   error={errors.experience?.[index]?.description?.message}
@@ -260,7 +271,6 @@ useEffect(() => {
                 </Label>
                 <div style={{ position: "relative" }}>
                   <Textarea
-                    onKeyDown={(e) => handleTextarea(e)}
                     error={errors.experience?.[index]?.description?.message}
                     id={`experience[${index}].description`}
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
@@ -285,18 +295,6 @@ useEffect(() => {
                     />
                   )}
                 </div>
-                {geoErrorMessageTextarea[
-                  `experience[${index}].description`
-                ] && (
-                  <p style={{ color: "red" }}>
-                    {
-                      geoErrorMessageTextarea[
-                        `experience[${index}].description`
-                      ]
-                    }
-                    &nbsp;
-                  </p>
-                )}
               </TextInput>
             </div>
           ))}

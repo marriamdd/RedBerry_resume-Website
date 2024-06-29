@@ -65,6 +65,6 @@ after this you can use this file to deploy project on server.
 
 ### Author
 
-- [LinkedIn](https://www.linkedin.com/in/mariam--davitashvili/)
-- [LinkedIn](https://www.linkedin.com/in/davit-avtandilashvili-7196a82a2/)
-- [LinkedIn](https://www.linkedin.com/in/anaraliev217/)
+- [LinkedIn](https://www.linkedin.com/in/mariam--davitashvili/) _Mariam Davitashvili_
+- [LinkedIn](https://www.linkedin.com/in/davit-avtandilashvili-7196a82a2/) _Davit Avtandilashvili_
+- [LinkedIn](https://www.linkedin.com/in/anaraliev217/) _Anar Alievi_
