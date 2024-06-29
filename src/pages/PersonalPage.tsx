@@ -8,6 +8,8 @@ import correctIcon from "../assets/icon-check.svg";
 import useGeorgianPatternTextarea from "../customHooks/TexareaGeoPattern";
 import useGeorgianPattern from "../customHooks/InputGeoPattern";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
+
 interface IFormInput {
   name: string;
   surname: string;
@@ -65,7 +67,11 @@ function PersonalPage() {
 
 
   return (
+
     <MainDiv>
+    <Helmet >
+        <title>Personal</title>
+      </Helmet>
       <div style={{ marginLeft: "6rem" }}>
         <Header style={{ display: "flex" }}>
           <img
@@ -111,7 +117,7 @@ function PersonalPage() {
                       value: 2,
                       message: "მინიმუმ 2 ასო",
                     },
-                    
+
                   })}
                 />
                 <p>მინიმუმ 2 ასო, ქართული ასო</p>
