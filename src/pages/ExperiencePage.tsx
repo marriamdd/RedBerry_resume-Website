@@ -45,7 +45,10 @@ function ExperiencePage() {
   useEffect(() => {
     const subscription = watch((value) => {
       if (value.experience) {
+        const storedData = localStorage.getItem("resume");
+        const existingResumeData = storedData ? JSON.parse(storedData) : {};
         const updatedExperienceData = {
+          ...existingResumeData,
           experience: value.experience.map((item) => ({
             position: item?.position || "",
             employer: item?.employer || "",
