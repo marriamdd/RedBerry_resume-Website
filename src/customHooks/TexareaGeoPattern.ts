@@ -18,6 +18,9 @@ const useGeorgianPatternTextarea = () => {
       "End",
       "Enter",
       "Shift",
+      "-",
+      "Shift",
+      "CapsLock",
       " ",
     ];
     const currentId = event.currentTarget.id;
