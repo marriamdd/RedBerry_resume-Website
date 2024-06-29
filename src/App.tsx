@@ -1,12 +1,12 @@
-import React, { useState, createContext } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import EducationPage from './pages/EducationPage';
-import ExperiencePage from './pages/ExperiencePage';
-import PersonalPage from './pages/PersonalPage';
-import ResumePage from './pages/ResumePage';
-import Layout from './layout/Layout';
-import { GlobalStyles } from './globalStyles/GlobalStyles';
+import React, { useState, createContext } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import EducationPage, { FormData } from "./pages/EducationPage";
+import ExperiencePage from "./pages/ExperiencePage";
+import PersonalPage from "./pages/PersonalPage";
+import ResumePage from "./pages/ResumePage";
+import Layout from "./layout/Layout";
+import { GlobalStyles } from "./globalStyles/GlobalStyles";
 
 export interface IExperience {
   experience: {
@@ -41,6 +41,8 @@ export interface IContext {
   setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>;
   personalData: IFormInput;
   setPersonalData: React.Dispatch<React.SetStateAction<IFormInput>>;
+  educationData: FormData;
+  setEducationData: React.Dispatch<React.SetStateAction<FormData>>;
 }
 
 export const Context = createContext<IContext>({
@@ -63,16 +65,20 @@ export const Context = createContext<IContext>({
     info: "",
     file: null,
     e: "",
-    personal: []
+    personal: [],
   },
   setPersonalData: () => {},
+  educationData: {
+    education: [],
+  },
+  setEducationData: () => {},
 });
 
 function App() {
   const [showExperienceInResume, setShowExperienceInResume] = useState(false);
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [experienceData, setExperienceData] = useState<IExperience>(() => {
-    const data = localStorage.getItem('resume');
+    const data = localStorage.getItem("resume");
     if (data) {
       return JSON.parse(data) as IExperience;
     }
@@ -80,23 +86,31 @@ function App() {
   });
 
   const [personalData, setPersonalData] = useState<IFormInput>(() => {
-    const data = localStorage.getItem('resume');
+    const data = localStorage.getItem("resume");
     if (data) {
       return JSON.parse(data) as IFormInput;
     }
     return {
-      name: '',
-      surname: '',
-      phone: '',
-      email: '',
-      address: '',
-      state: '',
-      data: '',
-      info: '',
+      name: "",
+      surname: "",
+      phone: "",
+      email: "",
+      address: "",
+      state: "",
+      data: "",
+      info: "",
       file: null,
-      e: '',
+      e: "",
       personal: [],
     };
+  });
+
+  const [educationData, setEducationData] = useState<FormData>(() => {
+    const data = localStorage.getItem("resume");
+    if (data) {
+      return JSON.parse(data) as FormData;
+    }
+    return { education: [] };
   });
 
   return (
@@ -112,6 +126,8 @@ function App() {
           setShowExperienceInResume,
           personalData,
           setPersonalData,
+          educationData,
+          setEducationData,
         }}
       >
         <BrowserRouter>
