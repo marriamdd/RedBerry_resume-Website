@@ -1,13 +1,14 @@
+import React from "react";
 import styled from "styled-components";
 import bgPattern from "../assets/cover.jpeg";
 import { Button } from "../styles/Buttons";
+import MainLogo from "../assets/MainLogo.png";
+import HomeLogo from "../assets/homeLogo.png";
+import { useNavigate } from "react-router-dom";
 
-interface StyledDivProps {
-  bgPattern: string;
-}
-
-const StyledDiv = styled.div<StyledDivProps>`
-  background-image: url(${(props) => props.bgPattern});
+// Styled Components
+const StyledDiv = styled.div`
+  background-image: url(${bgPattern});
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -48,24 +49,32 @@ const StyledDiv2 = styled.div`
     position: relative;
     z-index: 1;
   }
+
   & > img {
     position: absolute;
-
     right: 23%;
     top: 39%;
   }
 `;
 
-const HomePage = () => (
-  <StyledDiv bgPattern={bgPattern}>
-    <img src="./src/assets/MainLogo.png" alt="Main Logo" />
-    <hr />
+// HomePage Component
+const HomePage: React.FC = () => {
+  const navigate = useNavigate();
 
-    <StyledDiv2>
-      <Button>ᲠᲔᲖᲘᲣᲛᲔᲡ ᲓᲐᲛᲐᲢᲔᲑᲐ</Button>
-      <img src="./src/assets/homeLogo.png" alt="Home Logo" />
-    </StyledDiv2>
-  </StyledDiv>
-);
+  const handleNavigate = () => {
+    navigate("/personal");
+  };
+
+  return (
+    <StyledDiv>
+      <img src={MainLogo} alt="Main Logo" />
+      <hr />
+      <StyledDiv2>
+        <Button onClick={handleNavigate}>ᲠᲔᲖᲘᲣᲛᲔᲡ ᲓᲐᲛᲐᲢᲔᲑᲐ</Button>
+        <img src={HomeLogo} alt="Home Logo" />
+      </StyledDiv2>
+    </StyledDiv>
+  );
+};
 
 export default HomePage;

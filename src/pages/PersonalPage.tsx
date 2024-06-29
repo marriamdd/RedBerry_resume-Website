@@ -14,7 +14,7 @@ import { useContext } from "react";
 import { Context } from "../App";
 
 function PersonalPage() {
-  const {  setPersonalData } = useContext(Context);
+  const { setPersonalData } = useContext(Context);
 
   const {
     control,
@@ -33,12 +33,9 @@ function PersonalPage() {
     navigate("/experience");
   };
 
-  useEffect(() => {
-    const watchFields = watch();
-    localStorage.setItem("watchFields", JSON.stringify(watchFields));
-  }, [watch]);
-
   const [avatar, setAvatar] = useState<string | null>(null);
+ 
+
   const fileUploadRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageChange = () => {
@@ -47,31 +44,27 @@ function PersonalPage() {
     }
   };
 
- const uploadImageDisplay = (event: React.ChangeEvent<HTMLInputElement>) => {
-   const file = event.target.files?.[0];
-   if (file) {
+  const uploadImageDisplay = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileList = {
+        length: 1,
+        item: () => file,
+        [Symbol.iterator]: () => ({
+          next: () => ({
+            value: file,
+            done: false,
+          }),
+        }),
+      };
 
-     const fileList = {
-       length: 1,
-       item: () => file,
-       [Symbol.iterator]: () => ({
-         next: () => ({
-           value: file,
-           done: false,
-         }),
-       }),
-     };
+      const cachedURL = URL.createObjectURL(file);
+      setAvatar(cachedURL);
 
-     const cachedURL = URL.createObjectURL(file);
-     setAvatar(cachedURL);
-
-
-     setValue("file", fileList as never, { shouldValidate: true });
-     trigger("file");
-   }
- };
-
-
+      setValue("file", fileList as never, { shouldValidate: true });
+      trigger("file");
+    }
+  };
 
   const { handleGeorgianInput } = useGeorgianPattern();
   const { handleTextarea } = useGeorgianPatternTextarea();
@@ -120,6 +113,23 @@ function PersonalPage() {
 
     return () => subscription.unsubscribe();
   }, [watch, setPersonalData]);
+
+  const handlePageBackClick = () => {
+    localStorage.setItem(
+      "resume",
+      JSON.stringify({
+        personaldata: {
+          name: "",
+          surname: "",
+          email: "",
+          phone: "",
+          info: "",
+          file: null,
+        },
+      })
+    );
+  };
+
   return (
     <MainDiv>
       <Helmet>
@@ -132,9 +142,14 @@ function PersonalPage() {
               alignSelf: "flex-start",
               position: "absolute",
               left: "3.5rem",
+              cursor: "pointer",
             }}
             src="src/assets/personalSvg.svg"
             alt="personalSvg"
+            onClick={() => {
+              navigate(-1);
+              handlePageBackClick();
+            }}
           />
           <InfoContainer>
             <h1>ᲞᲘᲠᲐᲓᲘ ᲘᲜᲤᲝ</h1>

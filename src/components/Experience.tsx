@@ -14,7 +14,7 @@ export default function Experience() {
         <StyledExperience>
           <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
 
-          {experienceData.experience.map((item, index) => (
+          {experienceData.experience?.map((item, index) => (
             <div
               style={{
                 display: "flex",
