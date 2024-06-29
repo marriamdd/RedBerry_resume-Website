@@ -8,6 +8,9 @@ import Degree from "../components/Degree";
 import School from "../components/School";
 import Graduation from "../components/Graduation";
 import Description from "../components/Description";
+import { useContext, useEffect } from "react";
+import { Context } from "../App";
+import { useNavigate } from "react-router-dom";
 
 export interface FormData {
   education: {
@@ -26,6 +29,7 @@ function EducationPage() {
     control,
     watch,
     setValue,
+    reset,
   } = useForm<FormData>({
     defaultValues: {
       education: [
@@ -39,6 +43,27 @@ function EducationPage() {
     },
   });
 
+  const navigate = useNavigate();
+
+  function handleBackPage() {
+    localStorage.setItem(
+      "resume",
+      JSON.stringify({
+        education: [
+          {
+            university: "",
+            finish_date: "",
+            degree: "",
+            description: "",
+          },
+        ],
+      })
+    );
+    navigate(-1);
+  }
+
+  const { setEducationData } = useContext(Context);
+
   const { fields, append } = useFieldArray<FormData>({
     control,
     name: "education",
@@ -48,12 +73,54 @@ function EducationPage() {
     console.log(data);
   };
 
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.education) {
+        const storedData = localStorage.getItem("resume");
+        const existingResumeData = storedData ? JSON.parse(storedData) : {};
+        const updateEducationData = {
+          ...existingResumeData,
+          education: value.education.map((item) => ({
+            university: item?.university || "",
+            finish_date: item?.finish_date || "",
+            degree: item?.degree || "",
+            description: item?.description || "",
+          })),
+        };
+        localStorage.setItem("resume", JSON.stringify(updateEducationData));
+        setEducationData(updateEducationData);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setEducationData]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("resume");
+    if (data) {
+      const json = JSON.parse(data);
+      setEducationData(json);
+    }
+  }, [setEducationData]);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("resume");
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      if (data && data.education) {
+        reset({
+          education: data.education.map((item: FormData) => item),
+        });
+      }
+    }
+  }, [append, reset, fields.length]);
+
   return (
     <StyledEducation>
       <Helmet>
         <title>Education</title>
       </Helmet>
-      <img src={BackArrow} alt="back-arrow" />
+      <img src={BackArrow} alt="back-arrow" onClick={handleBackPage} />
       <EducationFormDiv>
         <EducationHeader>
           <h2>ᲒᲐᲜᲐᲗᲚᲔᲑᲐ</h2>
@@ -114,7 +181,9 @@ function EducationPage() {
           </AddSchool>
 
           <FormButtons>
-            <Button type="button">უკან</Button>
+            <Button type="button" onClick={() => navigate(-1)}>
+              უკან
+            </Button>
             <Button>დასრულება</Button>
           </FormButtons>
         </Form>
@@ -137,27 +206,6 @@ const StyledEducation = styled.div`
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 2.1rem;
-  }
-
-  & > input {
-    width: 100%;
-    height: 48px;
-    padding: 13px 16px 14px 16px;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    align-self: stretch;
-    border-radius: 4px;
-    background: #fff;
-    border: 1px solid #bcbcbc;
-    outline: 1px solid #bcbcbc;
-
-    &::placeholder {
-      font-size: 1.6rem;
-      font-weight: 400;
-      line-height: 2.1rem;
-      color: rgba(0, 0, 0, 0.6);
-    }
   }
 `;
 
@@ -184,9 +232,13 @@ const EducationHeader = styled.div`
   }
 `;
 
-const Form = styled.form``;
+const Form = styled.form`
+  margin-top: 8.9rem;
+`;
 
-const DinamicField = styled.div``;
+const DinamicField = styled.div`
+  margin-top: 5rem;
+`;
 
 const DegreeAndGraduation = styled.div`
   margin-top: 3rem;

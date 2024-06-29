@@ -61,7 +61,8 @@ const StyledDescription = styled.div<{ error?: string }>`
     padding: 13px 16px 14.5rem 16px;
     border-radius: 4px 0px 0px 0px;
     margin-top: 0.8rem;
-    border: ${(props) => (props.error ? "1px solid #EF5050" : "#BCBCBC")};
+    border: ${(props) =>
+      props.error ? "1px solid #EF5050" : "1px solid #BCBCBC"};
 
     &::placeholder {
       font-size: 1.6rem;

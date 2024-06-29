@@ -5,16 +5,13 @@ import { Context } from "../App";
 export default function Experience() {
   const { experienceData } = useContext(Context);
 
-
-
-
   return (
     <>
       {
         <StyledExperience>
           <h2>ᲒᲐᲛᲝᲪᲓᲘᲚᲔᲑᲐ</h2>
 
-          {experienceData.experience.map((item, index) => (
+          {experienceData.experience?.map((item, index) => (
             <div
               style={{
                 display: "flex",

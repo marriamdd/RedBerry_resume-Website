@@ -44,7 +44,7 @@ export default function School({ register, index, error, watch }: SchoolProps) {
         </span>
       </StyledSchool>
       {error && <ErrorImg src={warning} alt="warning" />}
-      {watch().education[index].university.length >= 2 && (
+      {watch().education[index].university?.length >= 2 && (
         <SucessImg src={check} />
       )}
     </SchoolDiv>
