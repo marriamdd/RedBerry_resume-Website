@@ -32,8 +32,6 @@ export default function Degree({
   });
   const [degree, setDegree] = useState("");
 
-  console.log(degree);
-
   useEffect(() => {
     async function getDegreeChoices() {
       const res = await fetch(
@@ -49,7 +47,6 @@ export default function Degree({
     setValue(`education.${index}.degree`, degree);
   }, [degree, index, setValue]);
 
-  console.log(error);
   return (
     <StyledDegree error={error}>
       <p>ხარისხი</p>
