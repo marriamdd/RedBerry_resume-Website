@@ -138,31 +138,14 @@ const StyledEducation = styled.div`
     font-weight: 500;
     line-height: 2.1rem;
   }
-
-  & > input {
-    width: 100%;
-    height: 48px;
-    padding: 13px 16px 14px 16px;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    align-self: stretch;
-    border-radius: 4px;
-    background: #fff;
-    border: 1px solid #bcbcbc;
-    outline: 1px solid #bcbcbc;
-
-    &::placeholder {
-      font-size: 1.6rem;
-      font-weight: 400;
-      line-height: 2.1rem;
-      color: rgba(0, 0, 0, 0.6);
-    }
-  }
 `;
 
 const EducationFormDiv = styled.div`
   width: 100%;
+
+  & > div {
+    margin-bottom: 0;
+  }
 `;
 
 const EducationHeader = styled.div`
@@ -184,9 +167,13 @@ const EducationHeader = styled.div`
   }
 `;
 
-const Form = styled.form``;
+const Form = styled.form`
+  margin-top: 8.9rem;
+`;
 
-const DinamicField = styled.div``;
+const DinamicField = styled.div`
+  margin-top: 5rem;
+`;
 
 const DegreeAndGraduation = styled.div`
   margin-top: 3rem;

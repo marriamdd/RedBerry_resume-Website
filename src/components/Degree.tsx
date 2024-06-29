@@ -116,7 +116,8 @@ const SelectValue = styled.div<{ error?: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: ${(props) => (props.error ? "1px solid #EF5050" : "#BCBCBC")};
+  border: ${(props) =>
+    props.error ? "1px solid #EF5050" : "1px solid #BCBCBC"};
   height: 4.8rem;
   padding: 1.3rem 2rem 1.4rem 1.6rem;
   border-radius: 4px 0px 0px 0px;
