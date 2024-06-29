@@ -11,14 +11,7 @@ import { Context, IExperience } from "../App";
 import { Helmet } from "react-helmet";
 
 function ExperiencePage() {
-<<<<<<< HEAD
   const { setExperienceData } = useContext(Context);
-=======
-  const {
-    setExperienceData,
-    //  setShowExperienceInResume
-  } = useContext(Context);
->>>>>>> origin/main
   const navigate = useNavigate();
   // setShowExperienceInResume(true);
 
@@ -68,33 +61,8 @@ useEffect(() => {
     }
   });
 
-<<<<<<< HEAD
   return () => subscription.unsubscribe();
 }, [watch, setExperienceData]);
-=======
-  useEffect(() => {
-    const subscription = watch((value) => {
-      if (value.experience) {
-        const storedData = localStorage.getItem("resume");
-        const existingResumeData = storedData ? JSON.parse(storedData) : {};
-        const updatedExperienceData = {
-          ...existingResumeData,
-          experience: value.experience.map((item) => ({
-            position: item?.position || "",
-            employer: item?.employer || "",
-            startDate: item?.startDate || "",
-            endDate: item?.endDate || "",
-            description: item?.description || "",
-          })),
-        };
-        localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
-        setExperienceData(updatedExperienceData);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch, setExperienceData]);
->>>>>>> origin/main
 
   useEffect(() => {
     const storedData = localStorage.getItem("resume");
