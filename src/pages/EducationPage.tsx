@@ -20,6 +20,7 @@ export interface FormData {
     description: string;
   }[];
 }
+[];
 
 function EducationPage() {
   const {
@@ -42,6 +43,16 @@ function EducationPage() {
       ],
     },
   });
+
+  const { personalData, educationData, experienceData } = useContext(Context);
+
+  const wholeResumeData = {
+    ...personalData,
+    ...educationData,
+    ...experienceData,
+  };
+
+  console.log(wholeResumeData);
 
   const navigate = useNavigate();
 

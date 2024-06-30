@@ -133,7 +133,7 @@ function ExperiencePage() {
   }, [setExperienceData]);
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
-    console.log(data.experience[1]);
+    // console.log(data.experience[1]);
     const filteredExperience = data.experience.filter((item) => {
       return (
         item.position.trim() !== "" ||
@@ -154,8 +154,8 @@ function ExperiencePage() {
     navigate("/education");
   };
 
-  console.log(errors);
-  console.log(required);
+  // console.log(errors);
+  // console.log(required);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <Helmet>

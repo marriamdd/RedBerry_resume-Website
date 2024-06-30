@@ -112,10 +112,7 @@ function PersonalPage() {
         ...updatedPersonalData,
       };
 
-      console.log(existingData);
-
       localStorage.setItem("resume", JSON.stringify(mergedData));
-      console.log(mergedData.personaldata);
       setPersonalData(mergedData.personaldata);
     });
 

@@ -124,21 +124,11 @@ function App() {
   const [educationData, setEducationData] = useState<FormData>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
+      console.log(JSON.parse(data).education);
       return JSON.parse(data).education as FormData;
     }
     return { education: [] };
   });
-  const [wholeResumeData, setWholeResumeData] = useState<IWholeResume>({
-    ...personalData,
-    education: educationData,
-    experience: experienceData,
-  });
-
-  console.log(experienceData);
-  console.log(personalData);
-  console.log(educationData);
-
-  console.log(wholeResumeData);
 
   return (
     <>
