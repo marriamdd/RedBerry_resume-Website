@@ -243,7 +243,6 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    onBlur={handleRefresh}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -282,7 +281,6 @@ function ExperiencePage() {
                           "Position is required for all but the first entry",
                       },
                     })}
-                    onBlur={handleRefresh}
                   />
                 </div>
                 <div>
