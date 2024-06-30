@@ -45,17 +45,25 @@ function EducationPage() {
   });
 
   const {
-    personalData,
-    educationData,
-    experienceData,
+    // personalData,
+    // educationData,
+    // experienceData,
     currentPageNumber,
     setIsLoading,
   } = useContext(Context);
 
+  const data = localStorage.getItem("resume");
+  const levani = data && JSON.parse(data);
+
   const wholeResumeData = {
-    ...personalData,
-    ...educationData,
-    ...experienceData,
+    name: levani.personaldata.name,
+    last_name: levani.personaldata.last_name,
+    about_me: levani.personaldata.info,
+    email: levani.personaldata.email,
+    phone_num: levani.personaldata.phone,
+
+    education: levani.education,
+    experience: levani.experience,
   };
 
   console.log(wholeResumeData);
@@ -80,6 +88,7 @@ function EducationPage() {
     await delay(1500);
 
     console.log(data);
+
     setIsLoading(false);
     navigate("/resume");
   };
