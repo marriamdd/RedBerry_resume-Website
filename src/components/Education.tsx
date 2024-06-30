@@ -9,7 +9,7 @@ export default function Education() {
       <h2>ᲒᲐᲜᲐᲗᲚᲔᲑᲐ</h2>
       {educationData.education?.map((item, index) => {
         return (
-          <div key={index}>
+          <div key={index} style={{ display: "flex", flexDirection: "column" }}>
             <h3>
               {item.university} {item.degree.length !== 0 && ","} {item.degree}
             </h3>
