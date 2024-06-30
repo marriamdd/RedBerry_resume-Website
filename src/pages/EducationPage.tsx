@@ -44,8 +44,13 @@ function EducationPage() {
     },
   });
 
-  const { personalData, educationData, experienceData, currentPageNumber } =
-    useContext(Context);
+  const {
+    personalData,
+    educationData,
+    experienceData,
+    currentPageNumber,
+    setIsLoading,
+  } = useContext(Context);
 
   const wholeResumeData = {
     ...personalData,
@@ -69,11 +74,14 @@ function EducationPage() {
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsLoading(true);
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+    await delay(1500);
+
     console.log(data);
-    await fetch("https://cv-colab-algouni.onrender.com/api/cv/", {
-      method: "POST",
-      body: JSON.stringify({}),
-    });
+    setIsLoading(false);
+    navigate("/resume");
   };
 
   useEffect(() => {
