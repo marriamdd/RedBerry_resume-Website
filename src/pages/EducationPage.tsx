@@ -44,7 +44,8 @@ function EducationPage() {
     },
   });
 
-  const { personalData, educationData, experienceData } = useContext(Context);
+  const { personalData, educationData, experienceData, currentPageNumber } =
+    useContext(Context);
 
   const wholeResumeData = {
     ...personalData,
@@ -57,19 +58,6 @@ function EducationPage() {
   const navigate = useNavigate();
 
   function handleBackPage() {
-    localStorage.setItem(
-      "resume",
-      JSON.stringify({
-        education: [
-          {
-            university: "",
-            finish_date: "",
-            degree: "",
-            description: "",
-          },
-        ],
-      })
-    );
     navigate(-1);
   }
 
@@ -106,12 +94,21 @@ function EducationPage() {
         setEducationData(updateEducationData);
       }
     });
+    console.log(subscription);
+    // return () => subscription.unsubscribe();
+  }, [watch, setEducationData, currentPageNumber]);
 
-    return () => subscription.unsubscribe();
-  }, [watch, setEducationData]);
+  // useEffect(() => {
+  //   setCurrentPageNumber(3);
+  // }, [setCurrentPageNumber]);
 
   useEffect(() => {
-    setCurrentPageNumber(3);
+    localStorage.setItem("currentPage", JSON.stringify(3));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
   }, [setCurrentPageNumber]);
 
   useEffect(() => {

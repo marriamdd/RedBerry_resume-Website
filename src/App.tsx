@@ -94,13 +94,21 @@ export const Context = createContext<IContext>({
 
 function App() {
   const [showExperienceInResume, setShowExperienceInResume] = useState(false);
-  const [currentPageNumber, setCurrentPageNumber] = useState(1);
+
+  const [currentPageNumber, setCurrentPageNumber] = useState(() => {
+    const data = localStorage.getItem("currentPage");
+    return data ? JSON.parse(data) : 1;
+  });
+
+  console.log("current", currentPageNumber);
   const [experienceData, setExperienceData] = useState<IExperience>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      return JSON.parse(data).experience as IExperience;
+      const jsonData = JSON.parse(data);
+      return jsonData as IExperience;
+    } else {
+      return { experience: [] };
     }
-    return { experience: [] };
   });
 
   const [personalData, setPersonalData] = useState<IFormInput>(() => {
@@ -127,14 +135,10 @@ function App() {
   const [educationData, setEducationData] = useState<FormData>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      
-      return JSON.parse(data).education as FormData;
+      return JSON.parse(data) as FormData;
     }
     return { education: [] };
   });
-
-
-
 
   return (
     <>

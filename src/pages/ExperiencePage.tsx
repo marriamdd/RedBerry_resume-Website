@@ -14,31 +14,17 @@ export interface Irequired {
   [index: number]: boolean;
 }
 function ExperiencePage() {
-  const { setExperienceData, setCurrentPageNumber } = useContext(Context);
+  const { setExperienceData, setCurrentPageNumber, currentPageNumber } =
+    useContext(Context);
   const navigate = useNavigate();
   // setShowExperienceInResume(true);
 
   const [required, setRequired] = useState<Irequired>({});
 
-  // const handleRefresh = () => {
-  //   window.location.reload();
-  // };
-  const handlePageBackClick = () => {
-    localStorage.setItem(
-      "resume",
-      JSON.stringify({
-        experience: [
-          {
-            position: "",
-            employer: "",
-            date_started: "",
-            date_finished: "",
-            description: "",
-          },
-        ],
-      })
-    );
+  const handleRefresh = () => {
+    window.location.reload();
   };
+
   const {
     handleSubmit,
     register,
@@ -67,7 +53,12 @@ function ExperiencePage() {
   });
 
   useEffect(() => {
-    setCurrentPageNumber(2);
+    localStorage.setItem("currentPage", JSON.stringify(2));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
   }, [setCurrentPageNumber]);
 
   useEffect(() => {
@@ -85,13 +76,14 @@ function ExperiencePage() {
             description: item?.description || "",
           })),
         };
+        console.log(updatedExperienceData.experience, "updatedExperienceData");
         localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
         setExperienceData(updatedExperienceData);
+        // aqqq
       }
     });
-
-    return () => subscription.unsubscribe();
-  }, [watch, setExperienceData]);
+    console.log(subscription);
+  }, [watch, setExperienceData, currentPageNumber]);
 
   useEffect(() => {
     const updatedRequiredFields = fields.map((item, index) => {
@@ -133,6 +125,7 @@ function ExperiencePage() {
   }, [setExperienceData]);
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
+    const storedData = localStorage.getItem("resume");
 
     const filteredExperience = data.experience.filter((item) => {
       return (
@@ -143,18 +136,24 @@ function ExperiencePage() {
         item.description.trim() !== ""
       );
     });
-
     data.experience = filteredExperience;
+    if (storedData) {
+      const dataJson = JSON.parse(storedData);
 
-    localStorage.setItem(
-      "resume",
-      JSON.stringify({ experience: filteredExperience })
-    );
+      localStorage.setItem(
+        "resume",
+        JSON.stringify({ ...dataJson, experience: filteredExperience })
+      );
+    }
+
+    // localStorage.setItem(
+    //   "resume",
+    //   JSON.stringify({ experience: filteredExperience })
+    // );
     setExperienceData({ experience: filteredExperience });
     navigate("/education");
   };
 
-  
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <Helmet>
@@ -163,7 +162,6 @@ function ExperiencePage() {
       <img
         onClick={() => {
           navigate(-1);
-          handlePageBackClick();
         }}
         style={{
           alignSelf: "flex-start",
@@ -203,7 +201,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    // onBlur={handleRefresh}
+                    onBlur={handleRefresh}
                   />
 
                   {errors.experience?.[index]?.position && (
@@ -245,7 +243,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    // onBlur={handleRefresh}
+                    onBlur={handleRefresh}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -284,7 +282,7 @@ function ExperiencePage() {
                           "Position is required for all but the first entry",
                       },
                     })}
-                    // onBlur={handleRefresh}
+                    onBlur={handleRefresh}
                   />
                 </div>
                 <div>
@@ -332,7 +330,7 @@ function ExperiencePage() {
                         message:
                           "Position is required for all but the first entry",
                       },
-                      minLength: { value: 5, message: "Minimum 5 characters" },
+                      minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   ></Textarea>
 

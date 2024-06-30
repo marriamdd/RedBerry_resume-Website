@@ -15,16 +15,18 @@ export default function About() {
           <span>{personalData.name}</span>
           <span>{personalData.last_name}</span>
         </h1>
-
-        <div className="email">
-          <img src={emailIcon} alt="emailIcon" />
-          <h3>{personalData.email}</h3>
-        </div>
-
-        <div className="phone">
-          <img src={phoneIcon} alt="phoneIcon" />
-          <h3>{personalData.phone}</h3>
-        </div>
+        {personalData.email && (
+          <div className="email">
+            <img src={emailIcon} alt="emailIcon" />
+            <h3>{personalData.email}</h3>
+          </div>
+        )}
+        {personalData.phone && (
+          <div className="phone">
+            <img src={phoneIcon} alt="phoneIcon" />
+            <h3>{personalData.phone}</h3>
+          </div>
+        )}
 
         <AboutMeText>
           <h2>ᲩᲔᲛ ᲨᲔᲡᲐᲮᲔᲑ</h2>
@@ -33,7 +35,11 @@ export default function About() {
       </Information>
 
       {/* {personalData.avatar && ( */}
-        <img style={{ maxWidth: "246px", maxHeight: "246px" , borderRadius: "50%" }}  src={personalData.avatar} alt="user-profile" />
+      <img
+        style={{ maxWidth: "246px", maxHeight: "246px", borderRadius: "50%" }}
+        src={personalData.avatar}
+        alt="user-profile"
+      />
       {/* )} */}
     </StyledAbout>
   );
@@ -41,7 +47,7 @@ export default function About() {
 const StyledAbout = styled.div`
   display: flex;
   width: 100%;
-gap: 4rem;
+  gap: 4rem;
   border-bottom: 1px solid #c8c8c8;
   padding-bottom: 1.9rem;
 

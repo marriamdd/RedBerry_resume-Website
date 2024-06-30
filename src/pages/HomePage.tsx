@@ -6,7 +6,6 @@ import MainLogo from "../assets/MainLogo.png";
 import HomeLogo from "../assets/homeLogo.png";
 import { useNavigate } from "react-router-dom";
 
-// Styled Components
 const StyledDiv = styled.div`
   background-image: url(${bgPattern});
   background-repeat: no-repeat;
