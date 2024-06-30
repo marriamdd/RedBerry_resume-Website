@@ -20,6 +20,7 @@ export interface FormData {
     description: string;
   }[];
 }
+[];
 
 function EducationPage() {
   const {
@@ -43,6 +44,16 @@ function EducationPage() {
     },
   });
 
+  const { personalData, educationData, experienceData } = useContext(Context);
+
+  const wholeResumeData = {
+    ...personalData,
+    ...educationData,
+    ...experienceData,
+  };
+
+  console.log(wholeResumeData);
+
   const navigate = useNavigate();
 
   function handleBackPage() {
@@ -62,15 +73,19 @@ function EducationPage() {
     navigate(-1);
   }
 
-  const { setEducationData } = useContext(Context);
+  const { setEducationData, setCurrentPageNumber } = useContext(Context);
 
   const { fields, append } = useFieldArray<FormData>({
     control,
     name: "education",
   });
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     console.log(data);
+    await fetch("https://cv-colab-algouni.onrender.com/api/cv/", {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
   };
 
   useEffect(() => {
@@ -94,6 +109,10 @@ function EducationPage() {
 
     return () => subscription.unsubscribe();
   }, [watch, setEducationData]);
+
+  useEffect(() => {
+    setCurrentPageNumber(3);
+  }, [setCurrentPageNumber]);
 
   useEffect(() => {
     const data = localStorage.getItem("resume");
