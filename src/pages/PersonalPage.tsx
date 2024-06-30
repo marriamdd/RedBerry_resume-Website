@@ -13,7 +13,7 @@ import { IFormInput } from "../App";
 import { useContext } from "react";
 import { Context } from "../App";
 import InputMask from "react-input-mask";
-
+import personalIcon from "../assets/personalSvg.svg";
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -169,7 +169,7 @@ function PersonalPage() {
               left: "3.5rem",
               cursor: "pointer",
             }}
-            src="src/assets/personalSvg.svg"
+            src={personalIcon}
             alt="personalSvg"
             onClick={() => {
               navigate(-1);
@@ -317,6 +317,7 @@ function PersonalPage() {
                       field.onChange(e.target.files);
                       uploadImageDisplay(e);
                     }}
+                    accept="image/*"
                   />
                   <Label>პირადი ფოტოს ატვირთვა</Label>
                   <button
