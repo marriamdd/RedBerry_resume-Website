@@ -3,13 +3,16 @@ import About from "./About";
 import Experience from "./Experience";
 import Education from "./Education";
 import logo from "../assets/logo.png";
+import { useContext } from "react";
+import { Context } from "../App";
 
 function ResumeComponent() {
+  const { currentPageNumber } = useContext(Context);
   return (
     <StyledResumeComponent>
-      <About />
-      <Experience />
-      <Education />
+      {currentPageNumber > 0 && <About />}
+      {currentPageNumber > 1 && <Experience />}
+      {currentPageNumber > 2 && <Education />}
 
       <Logo src={logo} alt="logo" />
     </StyledResumeComponent>

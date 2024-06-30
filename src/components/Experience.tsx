@@ -25,13 +25,15 @@ export default function Experience() {
                 <div style={{ display: "flex" }}>
                   <h3>{`${item.position} `}</h3>
 
-                  <h3>&nbsp;, {item.employer}</h3>
+                  {item.employer && <h3>&nbsp;, {item.employer}</h3>}
                 </div>
 
                 <div style={{ display: "flex" }}>
-                  <span>{`${item.startDate} `}</span>
+                  <span>{`${item.date_started} `}</span>
 
-                  <span>&nbsp;- {item.endDate}</span>
+                  {item.date_finished && (
+                    <span>&nbsp; - {item.date_finished}</span>
+                  )}
                 </div>
                 <p className="experience-text">{item.description}</p>
               </div>

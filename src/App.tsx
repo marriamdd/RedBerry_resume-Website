@@ -12,15 +12,15 @@ export interface IExperience {
   experience: {
     position: string;
     employer: string;
-    startDate: string;
-    endDate: string;
+    date_started: string;
+    date_finished: string;
     description: string;
   }[];
 }
 
 export interface IFormInput {
   name: string;
-  surname: string;
+  last_name: string;
   phone: string;
   email: string;
   address: string;
@@ -45,6 +45,22 @@ export interface IContext {
   setEducationData: React.Dispatch<React.SetStateAction<FormData>>;
 }
 
+export interface IWholeResume {
+  education: FormData;
+  experience: IExperience;
+  name: string;
+  last_name: string;
+  phone: string;
+  email: string;
+  address: string;
+  state: string;
+  data: string;
+  info: string;
+  file: FileList | null;
+  e: string;
+  personal: IFormInput[];
+}
+
 export const Context = createContext<IContext>({
   currentPageNumber: 1,
   setCurrentPageNumber: () => {},
@@ -56,7 +72,7 @@ export const Context = createContext<IContext>({
   setShowExperienceInResume: () => {},
   personalData: {
     name: "",
-    surname: "",
+    last_name: "",
     phone: "",
     email: "",
     address: "",
@@ -80,7 +96,7 @@ function App() {
   const [experienceData, setExperienceData] = useState<IExperience>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      return JSON.parse(data) as IExperience;
+      return JSON.parse(data).experience as IExperience;
     }
     return { experience: [] };
   });
@@ -88,11 +104,11 @@ function App() {
   const [personalData, setPersonalData] = useState<IFormInput>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      return JSON.parse(data) as IFormInput;
+      return JSON.parse(data).personaldata as IFormInput;
     }
     return {
       name: "",
-      surname: "",
+      last_name: "",
       phone: "",
       email: "",
       address: "",
@@ -108,10 +124,21 @@ function App() {
   const [educationData, setEducationData] = useState<FormData>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      return JSON.parse(data) as FormData;
+      return JSON.parse(data).education as FormData;
     }
     return { education: [] };
   });
+  const [wholeResumeData, setWholeResumeData] = useState<IWholeResume>({
+    ...personalData,
+    education: educationData,
+    experience: experienceData,
+  });
+
+  console.log(experienceData);
+  console.log(personalData);
+  console.log(educationData);
+
+  console.log(wholeResumeData);
 
   return (
     <>

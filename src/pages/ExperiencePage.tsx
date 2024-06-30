@@ -14,7 +14,7 @@ export interface Irequired {
   [index: number]: boolean;
 }
 function ExperiencePage() {
-  const { setExperienceData } = useContext(Context);
+  const { setExperienceData, setCurrentPageNumber } = useContext(Context);
   const navigate = useNavigate();
   // setShowExperienceInResume(true);
 
@@ -31,8 +31,8 @@ function ExperiencePage() {
           {
             position: "",
             employer: "",
-            startDate: "",
-            endDate: "",
+            date_started: "",
+            date_finished: "",
             description: "",
           },
         ],
@@ -53,8 +53,8 @@ function ExperiencePage() {
         {
           position: "",
           employer: "",
-          startDate: "",
-          endDate: "",
+          date_started: "",
+          date_finished: "",
           description: "",
         },
       ],
@@ -67,6 +67,10 @@ function ExperiencePage() {
   });
 
   useEffect(() => {
+    setCurrentPageNumber(2);
+  }, [setCurrentPageNumber]);
+
+  useEffect(() => {
     const subscription = watch((value) => {
       if (value.experience) {
         const storedData = localStorage.getItem("resume");
@@ -76,8 +80,8 @@ function ExperiencePage() {
           experience: value.experience.map((item) => ({
             position: item?.position || "",
             employer: item?.employer || "",
-            startDate: item?.startDate || "",
-            endDate: item?.endDate || "",
+            date_started: item?.date_started || "",
+            date_finished: item?.date_finished || "",
             description: item?.description || "",
           })),
         };
@@ -98,8 +102,8 @@ function ExperiencePage() {
       const allFieldsEmpty =
         item.description.trim().length === 0 &&
         item.employer.trim().length === 0 &&
-        item.endDate.trim().length === 0 &&
-        item.startDate.trim().length === 0 &&
+        item.date_finished.trim().length === 0 &&
+        item.date_started.trim().length === 0 &&
         item.position.trim().length === 0;
 
       return { [index]: !allFieldsEmpty };
@@ -134,8 +138,8 @@ function ExperiencePage() {
       return (
         item.position.trim() !== "" ||
         item.employer.trim() !== "" ||
-        item.startDate.trim() !== "" ||
-        item.endDate.trim() !== "" ||
+        item.date_started.trim() !== "" ||
+        item.date_finished.trim() !== "" ||
         item.description.trim() !== ""
       );
     });
@@ -265,16 +269,16 @@ function ExperiencePage() {
               <DateForm error={errors.experience?.[index]?.employer?.message}>
                 <div>
                   <Label
-                    error={errors.experience?.[index]?.startDate?.message}
-                    htmlFor={`experience[${index}].startDate`}
+                    error={errors.experience?.[index]?.date_started?.message}
+                    htmlFor={`experience[${index}].date_started`}
                   >
                     დაწყების რიცხვი
                   </Label>
 
                   <input
-                    id={`experience[${index}].startDate`}
+                    id={`experience[${index}].date_started`}
                     type="date"
-                    {...register(`experience.${index}.startDate`, {
+                    {...register(`experience.${index}.date_started`, {
                       required: {
                         value: required[index] || false,
                         message:
@@ -287,15 +291,15 @@ function ExperiencePage() {
                 <div>
                   <Label
                     style={{ textWrap: "nowrap" }}
-                    error={errors.experience?.[index]?.endDate?.message}
-                    htmlFor={`experience[${index}].endDate`}
+                    error={errors.experience?.[index]?.date_finished?.message}
+                    htmlFor={`experience[${index}].date_finished`}
                   >
                     დამთავრების რიცხვი
                   </Label>
                   <input
-                    id={`experience[${index}].endDate`}
+                    id={`experience[${index}].date_finished`}
                     type="date"
-                    {...register(`experience.${index}.endDate`, {
+                    {...register(`experience.${index}.date_finished`, {
                       required: {
                         value: required[index] || false,
                         message:
@@ -360,8 +364,8 @@ function ExperiencePage() {
               append({
                 position: "",
                 employer: "",
-                startDate: "",
-                endDate: "",
+                date_started: "",
+                date_finished: "",
                 description: "",
               })
             }

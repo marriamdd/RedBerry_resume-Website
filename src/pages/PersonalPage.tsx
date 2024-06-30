@@ -15,7 +15,7 @@ import { Context } from "../App";
 import InputMask from "react-input-mask";
 
 function PersonalPage() {
-  const { setPersonalData } = useContext(Context);
+  const { setPersonalData, setCurrentPageNumber } = useContext(Context);
 
   const {
     control,
@@ -78,9 +78,14 @@ function PersonalPage() {
   // };
 
   useEffect(() => {
+    setCurrentPageNumber(1);
+  }, [setCurrentPageNumber]);
+
+  useEffect(() => {
     const storedData = localStorage.getItem("resume");
     if (storedData) {
       const data = JSON.parse(storedData);
+
       if (data && data.personaldata) {
         reset(data.personaldata);
       }
@@ -92,7 +97,7 @@ function PersonalPage() {
       const updatedPersonalData = {
         personaldata: {
           name: value.name || "",
-          surname: value.surname || "",
+          last_name: value.last_name || "",
           email: value.email || "",
           phone: value.phone || "",
           info: value.info || "",
@@ -107,7 +112,10 @@ function PersonalPage() {
         ...updatedPersonalData,
       };
 
+      console.log(existingData);
+
       localStorage.setItem("resume", JSON.stringify(mergedData));
+      console.log(mergedData.personaldata);
       setPersonalData(mergedData.personaldata);
     });
 
@@ -120,7 +128,7 @@ function PersonalPage() {
       JSON.stringify({
         personaldata: {
           name: "",
-          surname: "",
+          last_name: "",
           email: "",
           phone: "",
           info: "",
@@ -218,23 +226,23 @@ function PersonalPage() {
             <div style={{ position: "relative", width: "100%" }}>
               <TextInput>
                 <Label
-                  className={errors.surname ? "errorLabel" : "label"}
-                  htmlFor="surname"
+                  className={errors.last_name ? "errorLabel" : "label"}
+                  htmlFor="last_name"
                 >
                   გვარი
                 </Label>
                 <input
                   className={
-                    watch().surname
+                    watch().last_name
                       ? "corrected"
-                      : errors.surname
+                      : errors.last_name
                       ? "errorInput"
                       : "input"
                   }
-                  id="surname"
+                  id="last_name"
                   onKeyDown={handleGeorgianInput}
                   type="text"
-                  {...register("surname", {
+                  {...register("last_name", {
                     required: "გვარის ველი სავალდებულოა",
                     minLength: {
                       value: 2,
@@ -248,7 +256,7 @@ function PersonalPage() {
                 />
                 <p style={{ textWrap: "nowrap" }}>მინიმუმ 2 ასო, ქართული ასო</p>
               </TextInput>
-              {watch().surname?.length >= 2 && (
+              {watch().last_name?.length >= 2 && (
                 <img
                   style={{
                     position: "absolute",
@@ -262,7 +270,7 @@ function PersonalPage() {
                 />
               )}
             </div>
-            {errors.surname && (
+            {errors.last_name && (
               <img
                 src={warningIcon}
                 alt={"warningIcon"}
