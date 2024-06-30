@@ -160,11 +160,11 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/resume" element={<ResumePage />} />
             <Route element={<Layout />}>
               <Route path="/education" element={<EducationPage />} />
               <Route path="/experience" element={<ExperiencePage />} />
               <Route path="/personal" element={<PersonalPage />} />
-              <Route path="/resume" element={<ResumePage />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -50,7 +50,7 @@ const StyledAbout = styled.div`
   gap: 4rem;
   border-bottom: 1px solid #c8c8c8;
   padding-bottom: 1.9rem;
-
+  /* justify-content: space-between; */
   & > img {
     width: 246px;
     height: 246px;

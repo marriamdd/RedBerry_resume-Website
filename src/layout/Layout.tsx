@@ -5,12 +5,14 @@ import styled from "styled-components";
 function Layout() {
   return (
     <StyledLayout>
-      <Main>
-        <Outlet />
-      </Main>
-      <CvContainer>
-        <ResumeComponent />
-      </CvContainer>
+      <>
+        <Main>
+          <Outlet />
+        </Main>
+        <CvContainer>
+          <ResumeComponent />
+        </CvContainer>
+      </>
     </StyledLayout>
   );
 }
