@@ -106,8 +106,8 @@ function EducationPage() {
         setEducationData(updateEducationData);
       }
     });
-
-    return () => subscription.unsubscribe();
+    console.log(subscription);
+    // return () => subscription.unsubscribe();
   }, [watch, setEducationData]);
 
   // useEffect(() => {

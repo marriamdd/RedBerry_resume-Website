@@ -14,7 +14,8 @@ export interface Irequired {
   [index: number]: boolean;
 }
 function ExperiencePage() {
-  const { setExperienceData, setCurrentPageNumber } = useContext(Context);
+  const { setExperienceData, setCurrentPageNumber, currentPageNumber } =
+    useContext(Context);
   const navigate = useNavigate();
   // setShowExperienceInResume(true);
 
@@ -94,9 +95,8 @@ function ExperiencePage() {
         setExperienceData(updatedExperienceData);
       }
     });
-
-    return () => subscription.unsubscribe();
-  }, [watch, setExperienceData]);
+    console.log(subscription);
+  }, [watch, setExperienceData, currentPageNumber]);
 
   useEffect(() => {
     const updatedRequiredFields = fields.map((item, index) => {

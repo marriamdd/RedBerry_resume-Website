@@ -25,6 +25,8 @@
 - <img src="readme/router.png" width="25" style="top: 8px" /> _React Router @6.6.1 - React library for routing_
 - <img src="readme/helmet.jpg" width="25" style="top: 8px" /> _React Helmet @6.1.0 - library for write code in head from JSX_
 - <img src="readme/react-hook-form-logo-only.png" width="25" style="top: 8px" /> \_React Hook Form @7.1.1 - Library for Handling Form State and Validation in React
+- <img src="readme/Screenshot 2024-06-30 at 3.19.37 PM.png" width="25" style="top: 8px" /> \_react-input/mask
+  -Library used to enter input in a certain format such as numeric, date, currency, email and phone.
 
 #
 

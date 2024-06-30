@@ -115,8 +115,8 @@ function PersonalPage() {
       localStorage.setItem("resume", JSON.stringify(mergedData));
       setPersonalData(mergedData.personaldata);
     });
-
-    return () => subscription.unsubscribe();
+    console.log(subscription);
+    // return () => subscription.unsubscribe();
   }, [watch, setPersonalData]);
 
   const handlePageBackClick = () => {
