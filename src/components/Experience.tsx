@@ -4,7 +4,7 @@ import { Context } from "../App";
 
 export default function Experience() {
   const { experienceData } = useContext(Context);
-  console.log(experienceData.experience, "experienceData");
+  console.log(experienceData, "experienceData");
   return (
     <>
       {

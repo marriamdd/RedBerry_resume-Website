@@ -14,8 +14,18 @@ import { useContext } from "react";
 import { Context } from "../App";
 import InputMask from "react-input-mask";
 
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 function PersonalPage() {
-  const { setPersonalData, setCurrentPageNumber } = useContext(Context);
+  const { setPersonalData, setCurrentPageNumber, currentPageNumber } =
+    useContext(Context);
 
   const {
     control,
@@ -43,26 +53,35 @@ function PersonalPage() {
       fileUploadRef.current.click();
     }
   };
-
-  const uploadImageDisplay = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadImageDisplay = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      const fileList = {
-        length: 1,
-        item: () => file,
-        [Symbol.iterator]: () => ({
-          next: () => ({
-            value: file,
-            done: false,
-          }),
-        }),
-      };
+      try {
+        const base64 = await fileToBase64(file);
+        setAvatar(base64);
 
-      const cachedURL = URL.createObjectURL(file);
-      setAvatar(cachedURL);
+        // Update context and localStorage with base64 string
+        setPersonalData((prevData) => ({
+          ...prevData,
+          avatar: base64,
+        }));
 
-      setValue("file", fileList as never, { shouldValidate: true });
-      trigger("file");
+        // Update form state and validate the file field
+        setValue("file", event.target.files, { shouldValidate: true });
+        trigger("file");
+
+        // Save to localStorage
+        const resumeData = JSON.parse(localStorage.getItem("resume") || "{}");
+        resumeData.personaldata = {
+          ...resumeData.personaldata,
+          avatar: base64,
+        };
+        localStorage.setItem("resume", JSON.stringify(resumeData));
+      } catch (error) {
+        console.error("Error converting file to base64:", error);
+      }
     }
   };
 
@@ -77,8 +96,17 @@ function PersonalPage() {
   //   e.target.value = sanitizedValue;
   // };
 
+  // useEffect(() => {
+  //   setCurrentPageNumber(1);
+  // }, [setCurrentPageNumber]);
+
   useEffect(() => {
-    setCurrentPageNumber(1);
+    localStorage.setItem("currentPage", JSON.stringify(1));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
   }, [setCurrentPageNumber]);
 
   useEffect(() => {
@@ -102,9 +130,9 @@ function PersonalPage() {
           phone: value.phone || "",
           info: value.info || "",
           file: value.file || null,
+          avatar: avatar || "",
         },
       };
-
       const storedData = localStorage.getItem("resume");
       const existingData = storedData ? JSON.parse(storedData) : {};
       const mergedData = {
@@ -115,25 +143,9 @@ function PersonalPage() {
       localStorage.setItem("resume", JSON.stringify(mergedData));
       setPersonalData(mergedData.personaldata);
     });
-    console.log(subscription);
-    // return () => subscription.unsubscribe();
-  }, [watch, setPersonalData]);
 
-  const handlePageBackClick = () => {
-    localStorage.setItem(
-      "resume",
-      JSON.stringify({
-        personaldata: {
-          name: "",
-          last_name: "",
-          email: "",
-          phone: "",
-          info: "",
-          file: null,
-        },
-      })
-    );
-  };
+    console.log(subscription);
+  }, [watch, setPersonalData, avatar, currentPageNumber]);
 
   return (
     <MainDiv>
@@ -153,7 +165,6 @@ function PersonalPage() {
             alt="personalSvg"
             onClick={() => {
               navigate(-1);
-              handlePageBackClick();
             }}
           />
           <InfoContainer>
@@ -306,7 +317,13 @@ function PersonalPage() {
                   >
                     ატვირთვა
                   </button>
-                  {avatar && <img src={avatar} alt="Uploaded avatar" />}
+                  {avatar && (
+                    <img
+                      style={{ maxWidth: "25rem", maxHeight: "25rem" }}
+                      src={avatar}
+                      alt="Uploaded avatar"
+                    />
+                  )}
                   {errors.file && <img src={warningIcon} alt="warningIcon" />}
                 </>
               )}
@@ -321,11 +338,11 @@ function PersonalPage() {
               className={watch().info ? "correctedInfo" : "info"}
               placeholder="ზოგადი ინფო შენ შესახებ"
               {...register("info", {
-                required: false,
-                pattern: {
-                  value: /^[ა-ჰ]+$/,
-                  message: "მხოლოდ ქართული ასოები",
-                },
+                // required: false,
+                // pattern: {
+                //   value: /^[ა-ჰ]+$/,
+                //   message: "მხოლოდ ქართული ასოები",
+                // },
               })}
             ></textarea>
           </div>

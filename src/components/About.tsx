@@ -1,42 +1,53 @@
 import styled from "styled-components";
 import emailIcon from "../assets/emailSymbol.png";
 import phoneIcon from "../assets/phone.png";
-import userProfile from "../assets/userImage.png";
+// import userProfile from "../assets/userImage.png";
+import { useContext } from "react";
+import { Context } from "../App";
 
 export default function About() {
+  const { personalData } = useContext(Context);
+
   return (
     <StyledAbout>
       <Information>
         <h1>
-          <span>ანზორ</span>
-          <span>მუმლაძე</span>
+          <span>{personalData.name}</span>
+          <span>{personalData.last_name}</span>
         </h1>
-
-        <div className="email">
-          <img src={emailIcon} alt="emailIcon" />
-          <h3>anzorr666@redberry.ge</h3>
-        </div>
-
-        <div className="phone">
-          <img src={phoneIcon} alt="phoneIcon" />
-          <h3>+995 597 63 45 16</h3>
-        </div>
+        {personalData.email && (
+          <div className="email">
+            <img src={emailIcon} alt="emailIcon" />
+            <h3>{personalData.email}</h3>
+          </div>
+        )}
+        {personalData.phone && (
+          <div className="phone">
+            <img src={phoneIcon} alt="phoneIcon" />
+            <h3>{personalData.phone}</h3>
+          </div>
+        )}
 
         <AboutMeText>
           <h2>ᲩᲔᲛ ᲨᲔᲡᲐᲮᲔᲑ</h2>
-          <p>
-            ძალიან მიყვარს დიზაინის კეთება. დილით ადრე რომ ავდგები
-            გამამხნევებელი ვარჯიშების მაგიერ დიზაინს ვაკეთებ.
-          </p>
+          <p>{personalData.info}</p>
         </AboutMeText>
       </Information>
-      <img src={userProfile} alt="user-profile" />
+
+      {/* {personalData.avatar && ( */}
+      <img
+        style={{ maxWidth: "246px", maxHeight: "246px", borderRadius: "50%" }}
+        src={personalData.avatar}
+        alt="user-profile"
+      />
+      {/* )} */}
     </StyledAbout>
   );
 }
-
 const StyledAbout = styled.div`
   display: flex;
+  width: 100%;
+  gap: 4rem;
   border-bottom: 1px solid #c8c8c8;
   padding-bottom: 1.9rem;
 

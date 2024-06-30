@@ -21,25 +21,10 @@ function ExperiencePage() {
 
   const [required, setRequired] = useState<Irequired>({});
 
-  // const handleRefresh = () => {
-  //   window.location.reload();
-  // };
-  const handlePageBackClick = () => {
-    localStorage.setItem(
-      "resume",
-      JSON.stringify({
-        experience: [
-          {
-            position: "",
-            employer: "",
-            date_started: "",
-            date_finished: "",
-            description: "",
-          },
-        ],
-      })
-    );
+  const handleRefresh = () => {
+    window.location.reload();
   };
+
   const {
     handleSubmit,
     register,
@@ -91,8 +76,10 @@ function ExperiencePage() {
             description: item?.description || "",
           })),
         };
+        console.log(updatedExperienceData.experience, "updatedExperienceData");
         localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
         setExperienceData(updatedExperienceData);
+        // aqqq
       }
     });
     console.log(subscription);
@@ -138,7 +125,8 @@ function ExperiencePage() {
   }, [setExperienceData]);
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
-    // console.log(data.experience[1]);
+    const storedData = localStorage.getItem("resume");
+
     const filteredExperience = data.experience.filter((item) => {
       return (
         item.position.trim() !== "" ||
@@ -148,19 +136,24 @@ function ExperiencePage() {
         item.description.trim() !== ""
       );
     });
-
     data.experience = filteredExperience;
+    if (storedData) {
+      const dataJson = JSON.parse(storedData);
 
-    localStorage.setItem(
-      "resume",
-      JSON.stringify({ experience: filteredExperience })
-    );
+      localStorage.setItem(
+        "resume",
+        JSON.stringify({ ...dataJson, experience: filteredExperience })
+      );
+    }
+
+    // localStorage.setItem(
+    //   "resume",
+    //   JSON.stringify({ experience: filteredExperience })
+    // );
     setExperienceData({ experience: filteredExperience });
     navigate("/education");
   };
 
-  // console.log(errors);
-  // console.log(required);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "5rem" }}>
       <Helmet>
@@ -169,7 +162,6 @@ function ExperiencePage() {
       <img
         onClick={() => {
           navigate(-1);
-          handlePageBackClick();
         }}
         style={{
           alignSelf: "flex-start",
@@ -209,7 +201,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    // onBlur={handleRefresh}
+                    onBlur={handleRefresh}
                   />
 
                   {errors.experience?.[index]?.position && (
@@ -251,7 +243,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    // onBlur={handleRefresh}
+                    onBlur={handleRefresh}
                   />
                   {errors.experience?.[index]?.employer && (
                     <img src={WarningIcon} alt="WarningIcon" />
@@ -290,7 +282,7 @@ function ExperiencePage() {
                           "Position is required for all but the first entry",
                       },
                     })}
-                    // onBlur={handleRefresh}
+                    onBlur={handleRefresh}
                   />
                 </div>
                 <div>

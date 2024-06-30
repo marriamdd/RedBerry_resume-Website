@@ -30,6 +30,7 @@ export interface IFormInput {
   file: FileList | null;
   e: string;
   personal: IFormInput[];
+  avatar: string;
 }
 
 export interface IContext {
@@ -82,6 +83,7 @@ export const Context = createContext<IContext>({
     file: null,
     e: "",
     personal: [],
+    avatar: "",
   },
   setPersonalData: () => {},
   educationData: {
@@ -103,7 +105,7 @@ function App() {
     const data = localStorage.getItem("resume");
     if (data) {
       const jsonData = JSON.parse(data);
-      return jsonData.experience as IExperience;
+      return jsonData as IExperience;
     } else {
       return { experience: [] };
     }
@@ -126,13 +128,13 @@ function App() {
       file: null,
       e: "",
       personal: [],
+      avatar: "",
     };
   });
 
   const [educationData, setEducationData] = useState<FormData>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      console.log(JSON.parse(data).education);
       return JSON.parse(data).education as FormData;
     }
     return { education: [] };

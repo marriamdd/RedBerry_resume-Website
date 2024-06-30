@@ -44,7 +44,7 @@ export default function Degree({
   }, []);
 
   useEffect(() => {
-    setValue(`education.${index}.degree`, degree);
+    degree && setValue(`education.${index}.degree`, degree);
   }, [degree, index, setValue]);
 
   return (
@@ -58,7 +58,6 @@ export default function Degree({
           >
             <DegreeInput
               placeholder="აირჩიეთ ხარისხი"
-              value={degree}
               {...register(`education.${index}.degree`, {
                 required: {
                   value: true,
