@@ -67,7 +67,12 @@ function ExperiencePage() {
   });
 
   useEffect(() => {
-    setCurrentPageNumber(2);
+    localStorage.setItem("currentPage", JSON.stringify(2));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
   }, [setCurrentPageNumber]);
 
   useEffect(() => {
@@ -333,7 +338,7 @@ function ExperiencePage() {
                         message:
                           "Position is required for all but the first entry",
                       },
-                      minLength: { value: 5, message: "Minimum 5 characters" },
+                      minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
                   ></Textarea>
 

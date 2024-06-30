@@ -110,8 +110,17 @@ function EducationPage() {
     return () => subscription.unsubscribe();
   }, [watch, setEducationData]);
 
+  // useEffect(() => {
+  //   setCurrentPageNumber(3);
+  // }, [setCurrentPageNumber]);
+
   useEffect(() => {
-    setCurrentPageNumber(3);
+    localStorage.setItem("currentPage", JSON.stringify(3));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
   }, [setCurrentPageNumber]);
 
   useEffect(() => {
