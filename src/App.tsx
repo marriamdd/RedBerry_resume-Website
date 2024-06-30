@@ -135,7 +135,7 @@ function App() {
   const [educationData, setEducationData] = useState<FormData>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
-      return JSON.parse(data).education as FormData;
+      return JSON.parse(data) as FormData;
     }
     return { education: [] };
   });
