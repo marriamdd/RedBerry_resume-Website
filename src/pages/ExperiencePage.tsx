@@ -20,9 +20,9 @@ function ExperiencePage() {
 
   const [required, setRequired] = useState<Irequired>({});
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
+  // const handleRefresh = () => {
+  //   window.location.reload();
+  // };
 
   const {
     handleSubmit,
@@ -195,7 +195,7 @@ function ExperiencePage() {
                       },
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
-                    onBlur={handleRefresh}
+                    // onBlur={handleRefresh}
                   />
 
                   {errors.experience?.[index]?.position && (
