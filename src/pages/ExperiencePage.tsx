@@ -30,7 +30,6 @@ function ExperiencePage() {
     control,
     watch,
     reset,
-
     formState: { errors },
   } = useForm<IExperience>({
     defaultValues: {
