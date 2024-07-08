@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import bgPattern from "../assets/cover.jpeg";
 import { Button } from "../styles/Buttons";
 import MainLogo from "../assets/MainLogo.png";
 import HomeLogo from "../assets/homeLogo.png";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../App";
 
 const StyledDiv = styled.div`
   background-image: url(${bgPattern});
@@ -57,11 +58,20 @@ const StyledDiv2 = styled.div`
 `;
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
+  const { setCurrentPageNumber } = useContext(Context);
 
+  const navigate = useNavigate();
   const handleNavigate = () => {
     navigate("/personal");
   };
+  useEffect(() => {
+    localStorage.setItem("currentPage", JSON.stringify(1));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
+  }, [setCurrentPageNumber]);
 
   return (
     <StyledDiv>

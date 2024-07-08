@@ -14,16 +14,24 @@ export interface Irequired {
   [index: number]: boolean;
 }
 function ExperiencePage() {
-  const { setExperienceData, setCurrentPageNumber, currentPageNumber } =
-    useContext(Context);
+  const {
+    setExperienceData,
+    setCurrentPageNumber,
+    setIsAllowed,
+    currentPageNumber,
+  } = useContext(Context);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    localStorage.setItem("currentPage", JSON.stringify(2));
+    const data = localStorage.getItem("currentPage");
+    if (data) {
+      const jsonData = JSON.parse(data);
+      setCurrentPageNumber(jsonData);
+    }
+  }, [setCurrentPageNumber]);
   const [required, setRequired] = useState<Irequired>({});
 
-  // const handleRefresh = () => {
-  //   window.location.reload();
-  // };
-
+  const [random, setRandom] = useState(0);
   const {
     handleSubmit,
     register,
@@ -49,16 +57,9 @@ function ExperiencePage() {
     control,
     name: "experience",
   });
+  console.log(fields, "fields");
 
-  useEffect(() => {
-    localStorage.setItem("currentPage", JSON.stringify(2));
-    const data = localStorage.getItem("currentPage");
-    if (data) {
-      const jsonData = JSON.parse(data);
-      setCurrentPageNumber(jsonData);
-    }
-  }, [setCurrentPageNumber]);
-
+  console.log("experience");
   useEffect(() => {
     const subscription = watch((value) => {
       if (value.experience) {
@@ -74,15 +75,33 @@ function ExperiencePage() {
             description: item?.description || "",
           })),
         };
-        console.log(updatedExperienceData.experience, "updatedExperienceData");
         localStorage.setItem("resume", JSON.stringify(updatedExperienceData));
         setExperienceData(updatedExperienceData);
-        // aqqq
       }
+      console.log(subscription);
     });
-    console.log(subscription);
   }, [watch, setExperienceData, currentPageNumber]);
 
+  useEffect(() => {
+    if (random == 1) {
+      const updatedRequiredFields = fields.map((item, index) => {
+        if (index === 0) {
+          return { [index]: true };
+        }
+
+        const allFieldsEmpty =
+          item.position.trim().length === 0 &&
+          item.description.trim().length === 0 &&
+          item.employer.trim().length === 0 &&
+          item.date_finished.trim().length === 0 &&
+          item.date_started.trim().length === 0;
+
+        return { [index]: !allFieldsEmpty };
+      });
+
+      setRequired(Object.assign({}, ...updatedRequiredFields));
+    }
+  }, [watch()]);
   useEffect(() => {
     const updatedRequiredFields = fields.map((item, index) => {
       if (index === 0) {
@@ -90,14 +109,15 @@ function ExperiencePage() {
       }
 
       const allFieldsEmpty =
+        item.position.trim().length === 0 &&
         item.description.trim().length === 0 &&
         item.employer.trim().length === 0 &&
         item.date_finished.trim().length === 0 &&
-        item.date_started.trim().length === 0 &&
-        item.position.trim().length === 0;
+        item.date_started.trim().length === 0;
 
       return { [index]: !allFieldsEmpty };
     });
+    console.log("ragac");
 
     setRequired(Object.assign({}, ...updatedRequiredFields));
   }, [fields, watch, setExperienceData, reset, append]);
@@ -124,7 +144,7 @@ function ExperiencePage() {
 
   const onSubmit: SubmitHandler<IExperience> = (data) => {
     const storedData = localStorage.getItem("resume");
-
+    setIsAllowed(true);
     const filteredExperience = data.experience.filter((item) => {
       return (
         item.position.trim() !== "" ||
@@ -193,8 +213,10 @@ function ExperiencePage() {
                         message:
                           "Position is required for all but the first entry",
                       },
+
                       minLength: { value: 2, message: "Minimum 2 characters" },
                     })}
+                    onChange={() => console.log("rrr")}
                     // onBlur={handleRefresh}
                   />
 
@@ -349,15 +371,16 @@ function ExperiencePage() {
             style={{ alignSelf: "flex-start" }}
             bg={"#62A1EB"}
             padding={"1.8rem 5.5rem"}
-            onClick={() =>
+            onClick={() => {
               append({
                 position: "",
                 employer: "",
                 date_started: "",
                 date_finished: "",
                 description: "",
-              })
-            }
+              });
+              setRandom(1);
+            }}
           >
             მეტი გამოცდილების დამატება
           </Button>

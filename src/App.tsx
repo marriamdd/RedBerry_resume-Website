@@ -7,6 +7,7 @@ import PersonalPage from "./pages/PersonalPage";
 import ResumePage from "./pages/ResumePage";
 import Layout from "./layout/Layout";
 import { GlobalStyles } from "./globalStyles/GlobalStyles";
+import PrivateRoute from "./components/PrivateRoute ";
 
 export interface IExperience {
   experience: {
@@ -46,6 +47,8 @@ export interface IContext {
   setEducationData: React.Dispatch<React.SetStateAction<FormData>>;
   loading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isAllowed: boolean;
+  setIsAllowed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IWholeResume {
@@ -94,6 +97,8 @@ export const Context = createContext<IContext>({
   setEducationData: () => {},
   loading: false,
   setIsLoading: () => {},
+  isAllowed: false,
+  setIsAllowed: () => {},
 });
 
 function App() {
@@ -104,7 +109,6 @@ function App() {
     return data ? JSON.parse(data) : 1;
   });
 
-  console.log("current", currentPageNumber);
   const [experienceData, setExperienceData] = useState<IExperience>(() => {
     const data = localStorage.getItem("resume");
     if (data) {
@@ -143,7 +147,7 @@ function App() {
     }
     return { education: [] };
   });
-
+  const [isAllowed, setIsAllowed] = useState(false);
   return (
     <>
       <GlobalStyles />
@@ -161,14 +165,22 @@ function App() {
           setPersonalData,
           educationData,
           setEducationData,
+          isAllowed,
+          setIsAllowed,
         }}
       >
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/resume" element={<ResumePage />} />
+            <Route
+              path="/resume"
+              element={
+                <PrivateRoute isAllowed={isAllowed} element={ResumePage} />
+              }
+            />
             <Route element={<Layout />}>
               <Route path="/education" element={<EducationPage />} />
+
               <Route path="/experience" element={<ExperiencePage />} />
               <Route path="/personal" element={<PersonalPage />} />
             </Route>

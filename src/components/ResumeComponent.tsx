@@ -8,7 +8,7 @@ import { Context } from "../App";
 
 function ResumeComponent() {
   const { currentPageNumber } = useContext(Context);
-  console.log(currentPageNumber > 1);
+
   return (
     <StyledResumeComponent>
       {currentPageNumber > 0 && <About />}
